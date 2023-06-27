@@ -14,7 +14,8 @@ const userData = {
 };
 
 before(() => {
-  if (!mongoose.connection.readyState) mongoose.connect(config.mongo.host);
+  if (mongoose.connection.readyState) mongoose.disconnect();
+  mongoose.connect(config.mongo.testHost);
 });
 
 beforeEach(async () => {

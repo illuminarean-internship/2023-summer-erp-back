@@ -20,7 +20,8 @@ const login = async (req, res, next) => {
       });
     }
 
-    throw new Error();
+    const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
+    return next(err);
   } catch (_err) {
     const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED);
     return next(err);

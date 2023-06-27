@@ -1,1 +1,1 @@
-// Add your password strategy
+// Add your passport strategy

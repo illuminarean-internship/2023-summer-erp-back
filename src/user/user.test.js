@@ -19,7 +19,8 @@ before(() => {
 });
 
 beforeEach(async () => {
-  const user = new User(userData);
+  const { username, mobileNumber } = userData;
+  const user = new User({ username, mobileNumber });
   const savedUser = await user.save();
   const { _id } = savedUser;
   userData._id = _id;

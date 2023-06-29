@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: env
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: set env
+        run: |
+          ls -ahl
+          echo "${{ secrets.ENV_LOCAL }}" > .env
+
+      - name: compose
+        run: zip -r dist.zip .
+
+      - name: aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+      - name: upload to S3
+        run: |
+          aws s3 cp --region ap-northeast-2 ./dist.zip s3://ilm-devops-deploy-bucket/2023-internship-back/dist.zip
+      - name: deploy to ec2
+        run: aws deploy create-deployment --application-name internship-serve --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name internship-server-group --s3-location bucket=ilm-devops-deploy-bucket,bundleType=zip,key=2023-internship-back/dist.zip

@@ -31,4 +31,4 @@ jobs:
         run: |
           aws s3 cp --region ap-northeast-2 ./dist.zip s3://ilm-devops-deploy-bucket/2023-internship-back/dist.zip
       - name: deploy to ec2
-        run: aws deploy create-deployment --application-name internship-serve --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name internship-server-group --s3-location bucket=ilm-devops-deploy-bucket,bundleType=zip,key=2023-internship-back/dist.zip
+        run: aws deploy create-deployment --application-name internship-server --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name internship-server-group --s3-location bucket=ilm-devops-deploy-bucket,bundleType=zip,key=2023-internship-back/dist.zip

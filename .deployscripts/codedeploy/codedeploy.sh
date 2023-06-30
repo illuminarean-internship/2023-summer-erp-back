@@ -9,7 +9,7 @@ sudo mv $FULL_LOCATION-new $FULL_LOCATION
 cd $FULL_LOCATION
 
 sudo pm2 list | grep $PROJECT
-sudo npm install
+sudo yarn install
 PM2_LIST_RESULT=$?
 echo "PM2_LIST_RESULT diff a b result :  ${PM2_LIST_RESULT}"
 if [ ${PM2_LIST_RESULT} -eq "0" ]

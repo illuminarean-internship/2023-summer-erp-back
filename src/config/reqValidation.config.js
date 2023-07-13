@@ -41,10 +41,49 @@ const login = {
   })
 };
 
+
+// POST /api/items
+const createItem = {
+  body: Joi.object({
+    modelname: Joi.string().required(),
+    SerialNumber: Joi.string().required()
+  })
+};
+
+// GET /api/items/:itemId
+const getItem = {
+  params: Joi.object({
+    itemId: Joi.string().hex().required()
+  })
+};
+
+// PUT /api/items/:itemId
+const updateItem = {
+  body: Joi.object({
+    modelname: Joi.string().required(),
+    SerialNumber: Joi.string().required()
+  }),
+  params: Joi.object({
+    itemId: Joi.string().hex().required()
+  })
+};
+
+// DELETE /api/items/:itemId
+const deleteItem = {
+  params: Joi.object({
+    itemId: Joi.string().hex().required()
+  })
+};
+
+
 export default {
   createUser,
   getUser,
   updateUser,
   deleteUser,
-  login
+  login,
+  createItem,
+  getItem,
+  updateItem,
+  deleteItem
 };

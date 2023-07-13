@@ -67,12 +67,12 @@ describe('## Item APIs', () => {
         .catch(done);
     });
 
-    it('should report error with message - Not found, when user does not exists', (done) => {
+    it('should report error with message - Not found, when item does not exists', (done) => {
       request(app)
         .get('/api/items/56c787ccc67fc16ccc1a5e92')
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal('No such user exists!');
+          expect(res.body.message).to.equal('No such item exists!');
           done();
         })
         .catch(done);
@@ -122,7 +122,7 @@ describe('## Item APIs', () => {
   describe('# DELETE /api/items/', () => {
     it('should delete item', (done) => {
       request(app)
-        .delete(`/api/items/${userData._id}`)
+        .delete(`/api/items/${itemData._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.deletedCount).to.equal(1);

@@ -80,4 +80,34 @@ app.use((err, req, res, _next) => {
   }
 });
 
+app.get("/", (req, res) => { 
+  res.send("<h2>It's Working!</h2>"); 
+}); 
+
+const PORT = 3000; 
+
+app.get('/tshirt', (req, res) => {
+  res.status(200).send({
+    tshirt: 'SHIRT',
+    size: 'large'
+  })
+});
+
+app.post('/tshirt/:id', (req, res) => {
+  const { id } = req.params;
+  const { logo } = req.body;
+
+  if(!logo) {
+    res.status(418).send({ message: 'We need a logo!' })
+  }
+
+  res.send({
+    tshirt: 'SHIRT with your ${logo} and ID of ${id}',
+  });
+});
+
+app.listen(PORT, () => { 
+  console.log(`API is listening on port ${PORT}`); 
+});
+
 export default app;

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors src/**/*.test.js --recursive",
-    "test:watch": "yarn test -- --watch"
+    "test:watch": "yarn test -- --watch",
+    "dev": "nodemon src/index.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

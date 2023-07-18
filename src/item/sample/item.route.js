@@ -1,6 +1,6 @@
 import express from 'express';
 import { validate } from 'express-validation';
-import reqValidation from '../config/reqValidation.config.js';
+import reqValidation from '../../config/reqValidation.config.js';
 import itemController from './item.controller.js';
 
 const router = express.Router();

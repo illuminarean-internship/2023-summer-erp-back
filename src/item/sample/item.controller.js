@@ -1,5 +1,5 @@
 import httpStatus from 'http-status';
-import APIError from '../helpers/apiErrorHelper.js';
+import APIError from '../../helpers/apiErrorHelper.js';
 import Item from './item.model.js';
 
 const list = async (req, res, next) => {

@@ -13,31 +13,31 @@ const userData = {
   mobileNumber: '1234567890'
 };
 
-before(() => {
-  if (mongoose.connection.readyState) mongoose.disconnect();
-  mongoose.connect(config.mongo.testHost);
-});
-
-beforeEach(async () => {
-  const { username, mobileNumber } = userData;
-  const user = new User({ username, mobileNumber });
-  const savedUser = await user.save();
-  const { _id } = savedUser;
-  userData._id = _id;
-});
-
-after(() => {
-  mongoose.models = {};
-  mongoose.modelSchemas = {};
-  if (mongoose.connection.db) mongoose.connection.db.dropDatabase();
-  if (mongoose.connection.readyState) mongoose.disconnect();
-});
-
-afterEach(() => {
-  if (mongoose.connection.db) mongoose.connection.db.dropDatabase();
-});
-
 describe('## User APIs', () => {
+  before(async () => {
+    if (mongoose.connection.readyState) await mongoose.disconnect();
+    await mongoose.connect(config.mongo.testHost);
+  });
+
+  beforeEach(async () => {
+    const { username, mobileNumber } = userData;
+    const user = new User({ username, mobileNumber });
+    const savedUser = await user.save();
+    const { _id } = savedUser;
+    userData._id = _id;
+  });
+
+  after(async () => {
+    mongoose.models = {};
+    mongoose.modelSchemas = {};
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+    if (mongoose.connection.readyState) await mongoose.disconnect();
+  });
+
+  afterEach(async () => {
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+  });
+
   describe('# POST /api/users', () => {
     it('should create a new user', (done) => {
       const { username, mobileNumber } = userData;

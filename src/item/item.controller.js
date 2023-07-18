@@ -50,7 +50,7 @@ const update = async (req, res, next) => {
 const remove = async (req, res, next) => {
   try {
     const { itemId } = req.params;
-    const result = await item.delete(itemId);
+    const result = await Item.delete(itemId);
     return res.json(result);
   } catch (err) {
     return next(err);

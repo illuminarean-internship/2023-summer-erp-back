@@ -13,31 +13,31 @@ const itemData = {
   SerialNumber: '1234567890'
 };
 
-before(() => {
-  if (mongoose.connection.readyState) mongoose.disconnect();
-  mongoose.connect(config.mongo.testHost);
-});
-
-beforeEach(async () => {
-  const { modelname, SerialNumber } = itemData;
-  const item = new Item({ modelname, SerialNumber });
-  const savedItem = await item.save();
-  const { _id } = savedItem;
-  itemData._id = _id;
-});
-
-after(() => {
-  mongoose.models = {};
-  mongoose.modelSchemas = {};
-  if (mongoose.connection.db) mongoose.connection.db.dropDatabase();
-  if (mongoose.connection.readyState) mongoose.disconnect();
-});
-
-afterEach(() => {
-  if (mongoose.connection.db) mongoose.connection.db.dropDatabase();
-});
-
 describe('## Item APIs', () => {
+  before(async () => {
+    if (mongoose.connection.readyState) await mongoose.disconnect();
+    await mongoose.connect(config.mongo.testHost);
+  });
+
+  beforeEach(async () => {
+    const { modelname, SerialNumber } = itemData;
+    const item = new Item({ modelname, SerialNumber });
+    const savedItem = await item.save();
+    const { _id } = savedItem;
+    itemData._id = _id;
+  });
+
+  after(async () => {
+    mongoose.models = {};
+    mongoose.modelSchemas = {};
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+    if (mongoose.connection.readyState) await mongoose.disconnect();
+  });
+
+  afterEach(async () => {
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+  });
+
   describe('# POST /api/items', () => {
     it('should create a new item', (done) => {
       const { modelname, SerialNumber } = itemData;
@@ -67,12 +67,12 @@ describe('## Item APIs', () => {
         .catch(done);
     });
 
-    it('should report error with message - Not found, when user does not exists', (done) => {
+    it('should report error with message - Not found, when item does not exists', (done) => {
       request(app)
         .get('/api/items/56c787ccc67fc16ccc1a5e92')
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal('No such user exists!');
+          expect(res.body.message).to.equal('No such item exists!');
           done();
         })
         .catch(done);
@@ -122,7 +122,7 @@ describe('## Item APIs', () => {
   describe('# DELETE /api/items/', () => {
     it('should delete item', (done) => {
       request(app)
-        .delete(`/api/items/${userData._id}`)
+        .delete(`/api/items/${itemData._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.deletedCount).to.equal(1);

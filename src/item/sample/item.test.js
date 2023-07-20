@@ -4,27 +4,27 @@ import httpStatus from 'http-status';
 import chai, { expect } from 'chai';
 import app from '../../app.js';
 import config from '../config/env.js';
-import User from './user.model.js';
+import Item from './item.model.js';
 
 chai.config.includeStack = true;
 
-const userData = {
-  username: 'user',
-  mobileNumber: '1234567890'
+const itemData = {
+  modelname: 'Mac1',
+  SerialNumber: '1234567890'
 };
 
-describe('## User APIs', () => {
+describe('## Item APIs', () => {
   before(async () => {
     if (mongoose.connection.readyState) await mongoose.disconnect();
     await mongoose.connect(config.mongo.testHost);
   });
 
   beforeEach(async () => {
-    const { username, mobileNumber } = userData;
-    const user = new User({ username, mobileNumber });
-    const savedUser = await user.save();
-    const { _id } = savedUser;
-    userData._id = _id;
+    const { modelname, SerialNumber } = itemData;
+    const item = new Item({ modelname, SerialNumber });
+    const savedItem = await item.save();
+    const { _id } = savedItem;
+    itemData._id = _id;
   });
 
   after(async () => {
@@ -38,52 +38,52 @@ describe('## User APIs', () => {
     if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
   });
 
-  describe('# POST /api/users', () => {
-    it('should create a new user', (done) => {
-      const { username, mobileNumber } = userData;
+  describe('# POST /api/items', () => {
+    it('should create a new item', (done) => {
+      const { modelname, SerialNumber } = itemData;
       request(app)
-        .post('/api/users')
-        .send({ username, mobileNumber })
+        .post('/api/items')
+        .send({ modelname, SerialNumber })
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal(username);
-          expect(res.body.mobileNumber).to.equal(mobileNumber);
+          expect(res.body.modelname).to.equal(modelname);
+          expect(res.body.SerialNumber).to.equal(SerialNumber);
           done();
         })
         .catch(done);
     });
   });
 
-  describe('# GET /api/users/:userId', () => {
-    it('should get user details', (done) => {
+  describe('# GET /api/items/:itemId', () => {
+    it('should get item details', (done) => {
       request(app)
-        .get(`/api/users/${userData._id}`)
+        .get(`/api/items/${itemData._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal(userData.username);
-          expect(res.body.mobileNumber).to.equal(userData.mobileNumber);
+          expect(res.body.modelname).to.equal(itemData.modelname);
+          expect(res.body.SerialNumber).to.equal(itemData.SerialNumber);
           done();
         })
         .catch(done);
     });
 
-    it('should report error with message - Not found, when user does not exists', (done) => {
+    it('should report error with message - Not found, when item does not exists', (done) => {
       request(app)
-        .get('/api/users/56c787ccc67fc16ccc1a5e92')
+        .get('/api/items/56c787ccc67fc16ccc1a5e92')
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal('No such user exists!');
+          expect(res.body.message).to.equal('No such item exists!');
           done();
         })
         .catch(done);
     });
   });
 
-  describe('# PUT /api/users/:userId', () => {
-    it('should update user details', (done) => {
+  describe('# PUT /api/items/:itemId', () => {
+    it('should update item details', (done) => {
       request(app)
-        .put(`/api/users/${userData._id}`)
-        .send({ username: 'user1', mobileNumber: '1111111111' })
+        .put(`/api/items/${itemData._id}`)
+        .send({ modelname: 'Mac2', SerialNumber: '1111111111' })
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.matchedCount).to.equal(1);
@@ -94,10 +94,10 @@ describe('## User APIs', () => {
     });
   });
 
-  describe('# GET /api/users/', () => {
-    it('should get all users', (done) => {
+  describe('# GET /api/items/', () => {
+    it('should get all items', (done) => {
       request(app)
-        .get('/api/users')
+        .get('/api/items')
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.an('array');
@@ -106,9 +106,9 @@ describe('## User APIs', () => {
         .catch(done);
     });
 
-    it('should get all users (with limit and skip)', (done) => {
+    it('should get all items (with limit and skip)', (done) => {
       request(app)
-        .get('/api/users')
+        .get('/api/items')
         .query({ limit: 10, skip: 1 })
         .expect(httpStatus.OK)
         .then((res) => {
@@ -119,10 +119,10 @@ describe('## User APIs', () => {
     });
   });
 
-  describe('# DELETE /api/users/', () => {
-    it('should delete user', (done) => {
+  describe('# DELETE /api/items/', () => {
+    it('should delete item', (done) => {
       request(app)
-        .delete(`/api/users/${userData._id}`)
+        .delete(`/api/items/${itemData._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.deletedCount).to.equal(1);

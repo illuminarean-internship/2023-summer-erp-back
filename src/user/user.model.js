@@ -3,13 +3,18 @@
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-  username: {
+  name: {
     type: String,
     required: true
   },
-  mobileNumber: {
-    type: String,
+  teamName: {
+    type : String, 
     required: true
+  },
+  numOfAssets: {
+    type:Number,
+    default: 0,
+    required:true
   },
   createdAt: {
     type: Date,
@@ -40,8 +45,8 @@ UserSchema.statics = {
     return this.findById(id).exec();
   },
 
-  update: function (_id, username, mobileNumber) {
-    return this.updateOne({ _id }, { username, mobileNumber }).exec();
+  update: function (_id, name, teamName) {
+    return this.updateOne({ _id }, { name, teamName }).exec();
   },
 
   delete: function (_id) {

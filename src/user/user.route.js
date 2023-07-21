@@ -7,11 +7,12 @@ const router = express.Router();
 
 router.route('/')
   .get(userController.list)
-  .post(validate(reqValidation.createUser), userController.create);
+  //.post(validate(reqValidation.createUser), userController.create);
+  .post(userController.create);
 
 router.route('/:userId')
-  .get(validate(reqValidation.getUser), userController.get)
-  .put(validate(reqValidation.updateUser), userController.update)
-  .delete(validate(reqValidation.deleteUser), userController.remove);
+  .get(userController.get)
+  .put(userController.update)
+  .delete(userController.remove);
 
 export default router;

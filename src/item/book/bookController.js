@@ -21,8 +21,11 @@ let books = [
     const newBook = {
       id: books.length + 1,
       title: data.title,
-      author: data.author,
-      genre: data.genre,
+      team: data.team,
+      location: data.location,
+      purchaseDate: data.purchaseDate,
+      price: data.price,
+      remarks: data.remarks,
       isAvailable: true,
     };
     books.push(newBook);

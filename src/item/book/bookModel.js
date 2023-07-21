@@ -3,11 +3,11 @@
 import mongoose from 'mongoose';
 
 const bookSchema = new mongoose.Schema({
-    name: {
+    title: {
       type: String,
       required: true
     },
-     team:{
+    team:{
       type: mongoose.Schema.Types.ObjectId,
           ref: 'team',
           required: true

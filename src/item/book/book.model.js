@@ -10,7 +10,7 @@ const BookSchema = new mongoose.Schema({
      Team:{
       type: mongoose.Schema.Types.ObjectId,
           ref: 'Team',
-          required: false
+          required: true
     },
     Location:{
       type: mongoose.Schema.Types.ObjectId,
@@ -33,7 +33,7 @@ const BookSchema = new mongoose.Schema({
     location_is_team:{
       type: Boolean,
       default: false,
-      required: false
+      required: true 
     },
     Archive:{
       type: [String],

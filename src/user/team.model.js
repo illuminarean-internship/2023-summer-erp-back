@@ -16,6 +16,11 @@ const TeamSchema = new mongoose.Schema({
         }
     }],
     required : false
+  },
+  connectingId : { 
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'User',
+    required: false
   }
 });
 

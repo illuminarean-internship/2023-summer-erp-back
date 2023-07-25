@@ -35,7 +35,7 @@ const create = async (req, res, next) => {
     const team = new Team({ name });
     await team.save();
 
-    const user = new User({ name: name, teamName: name });
+    const user = new User({ name: name });
     const savedUser = await user.save();
     team.connectingId = savedUser._id;
     const savedteam = await team.save();
@@ -55,10 +55,7 @@ const update = async (req, res, next) => {
     
 
     const teamObj = await Team.get(teamId);
-    for (let i = teamObj.members.length - 1; i >= 0; i--) {
-      await User.update(teamObj.members[i].userId, teamObj.members[i].userName, name);
-    }
-    await User.update(teamObj.connectingId, name, name);
+    await User.rename(teamObj.connectingId, name);
     const team = await Team.update(teamId, name);
     return res.json(team);
   } catch (err) {
@@ -70,9 +67,11 @@ const remove = async (req, res, next) => {
   try {
     const { teamId } = req.params;
     const team = await Team.get(teamId);
-    if(team.members.length!=0) return next(new APIError(`The team has members! ${team.members}\n You should move them to other team!`, httpStatus.NOT_ACCEPTABLE));
+    if(team.numOfMembers!=0) return next(new APIError(`The team has  ${team.numOfMembers} members! \n You should move them to other team!`, httpStatus.NOT_ACCEPTABLE));
+    
     const connectingUser = await User.get(team.connectingId);
     if(connectingUser.numOfAssets!=0) return next(new APIError(`The team has items! ${team.members}\n You should move them to other team or office!`, httpStatus.NOT_ACCEPTABLE));
+    
     await User.delete(team.connectingId);
     const result = await Team.delete(teamId);
     return res.json(result);

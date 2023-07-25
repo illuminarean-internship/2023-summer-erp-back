@@ -1,13 +1,28 @@
 import httpStatus from 'http-status';
 import APIError from '../../helpers/apiErrorHelper.js';
 import User from '../../user/user.model.js';
+import Team from '../../user/team.model.js';
 import Book from './book.model.js';
 
 const list = async (req, res, next) => {
   try {
     const { limit = 50, skip = 0 } = req.query;
     const books = await Book.list({ limit, skip });
-    res.json(books);
+
+    const booklist = await Promise.all(
+      books.map(async (item) => {
+        const { name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+        const user = await User.get(userId);
+        const location = user.name;
+        let teamName = "";
+        if(user.teamId){
+        const team = await Team.get(user.teamId);
+        teamName = team.name;}
+        // Rearrange the keys, add the new key, and create a new object
+        return { name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+      })
+    );
+    res.json(booklist);
   } catch (err) {
     next(err);
   }
@@ -41,8 +56,8 @@ const checkLocation = (location) => {
 const create = async (req, res, next) => {
   try {
     const { name, location, purchaseDate, price, remarks } = req.body;
-    
-    //Hidden problem!!same user name??? 
+    //Hidden problem!!same user name??? => should be replaced to userId
+
     //find the team is existing
     const userObj = await User.findOne({name: location}).exec();
     if (!userObj) {
@@ -52,19 +67,18 @@ const create = async (req, res, next) => {
     }
 
     //fill Bookschema
-    const teamName = userObj.teamName;
-    const book = new Book({ name, teamName, location, purchaseDate, price});
+    const userId = userObj._id;
+    const book = new Book({ name, purchaseDate, price, userId});
     if(remarks) book.remarks = remarks;
-    book.userId=userObj._id;
     const {isUnreserved,isArchived} = checkLocation(location);
     if(isUnreserved) book.isUnreserved=true;
     if(isArchived) book.isArchived=true;
-    const savedUBook = await book.save();
+    const savedBook = await book.save();
 
     //update item list of user
-    userObj.books.push(savedUBook._id);
+    userObj.numOfAssets=userObj.numOfAssets+1;
     await userObj.save();
-    return res.json(savedUBook);
+    return res.json(savedBook);
   } catch (err) {
     return next(err);
   }
@@ -82,13 +96,11 @@ const update = async (req, res, next) => {
     const validation = await User.findOne({name: location}).exec();
     if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
     
-    let new_name, new_purchaseDate, new_price, new_remarks;
     //if contents changed-> just updated
-    if(name) new_name = name; else new_name = book.name;
-    if(purchaseDate) new_purchaseDate = purchaseDate; else new_purchaseDate = book.purchaseDate;
-    if(price) new_price = price; else new_price = book.price;
-    if(remarks) new_remarks = remarks; else new_remarks = book.remarks;
-    await Book.updateContents(bookId, new_name, new_purchaseDate, new_price, new_remarks);
+    if(name) book.name=name;
+    if(purchaseDate) book.purchaseDate= purchaseDate; 
+    if(price) book.price=price;
+    if(remarks) book.remarks=remarks;
 
     //if location changed-> update user schema and logg
     if(location){
@@ -100,19 +112,16 @@ const update = async (req, res, next) => {
       }
       // update user schema
       const userObj = await User.get(book.userId);
-      for (let i = userObj.books.length - 1; i >= 0; i--) {
-      if (userObj.books[i].toString() == bookId ) {
-          userObj.books.splice(i, 1);
-          await userObj.save();
-          const new_userObj = validation; // and then push userObj to new Team
-          new_userObj.books.push(book._id);
-          await new_userObj.save();
-          await Book.updateLocation(bookId, new_userObj.teamName, new_userObj.name, new_userObj._id);
-          break;
-        }
+      userObj.numOfAssets= userObj.numOfAssets-1;
+      await userObj.save();
+      
+      const new_userObj = validation; // and then push userObj to new Team
+      new_userObj.numOfAssets = userObj.numOfAssets+1;
+      await new_userObj.save();
+
+      book.userId=validation._id;
     }
-  }
-    const bookSaved = await Book.get(bookId);
+    const bookSaved = await book.save();
     return res.json(bookSaved);
   } catch (err) {
     return next(err);
@@ -125,12 +134,8 @@ const remove = async (req, res, next) => {
     const book = await Book.get(bookId);
     if(!book) return next( new APIError('No such book exists!', httpStatus.NOT_FOUND));
     const userObj = await User.get(book.userId);
-      for (let i = userObj.books.length - 1; i >= 0; i--) {
-      if (userObj.books[i].toString() == bookId ) {
-        userObj.books.splice(i, 1);
-        await userObj.save();
-        break;
-      }} 
+    userObj.numOfAssets= userObj.numOfAssets-1;
+    await userObj.save();
     const result = await Book.delete(bookId);
     return res.json(result);
   }

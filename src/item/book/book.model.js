@@ -7,14 +7,6 @@ const BookSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    teamName: {
-      type: String,
-      required: true
-    },
-    location: {
-      type: String,
-      required: true
-    },
     purchaseDate: {
       type: Date,
       required: true

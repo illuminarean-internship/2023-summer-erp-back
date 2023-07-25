@@ -2,15 +2,10 @@
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-const TeamSchema = new mongoose.Schema({
+const ProjectSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
-  },
-  connectingId : { 
-    type: mongoose.Schema.Types.ObjectId,
-    ref:'User',
-    required: false
   },
   numOfMembers :{
     type: Number,
@@ -25,10 +20,10 @@ const TeamSchema = new mongoose.Schema({
  * - virtuals
  */
 
-TeamSchema.method({
+ProjectSchema.method({
 });
 
-TeamSchema.statics = {
+ProjectSchema.statics = {
   list: function ({ skip = 0, limit = 50 } = {}) {
     return this.find({})
       .skip(+skip)
@@ -49,4 +44,4 @@ TeamSchema.statics = {
   }
 };
 
-export default mongoose.model('Team', TeamSchema);
+export default mongoose.model('Project', ProjectSchema);

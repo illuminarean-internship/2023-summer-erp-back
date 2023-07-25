@@ -7,25 +7,20 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  teamName: {
-    type : String, 
-    required: true
-  },
-  project: {
-    type : [String], 
+  teamId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
     required: false,
+  },
+  projectIdList: {
+    type : [mongoose.Schema.Types.ObjectId],
+    ref: 'Project',
     default:[]
   },
   field: {
     type : String, 
     required: false,
     default:""
-  },
-  books : {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Book',
-    required: true,
-    default: []
   },
   numOfAssets: {
     type:Number,
@@ -61,8 +56,12 @@ UserSchema.statics = {
     return this.findById(id).exec();
   },
 
-  update: function (_id, name, teamName) {
-    return this.updateOne({ _id }, { name, teamName }).exec();
+  rename: function (_id, name) {
+    return this.updateOne({ _id }, { $set: { name: name} }).exec();
+  },
+
+  update: function (_id, name, teamId) {
+    return this.updateOne({ _id }, { name, teamId }).exec();
   },
 
   delete: function (_id) {

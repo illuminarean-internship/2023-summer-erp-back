@@ -3,6 +3,7 @@ import authRoute from './src/auth/auth.route.js';
 import userRoute from './src/user/user.route.js';
 import teamRoute from './src/user/team.route.js';
 import itemRoute from './src/item/sample/item.route.js';
+import bookRoute from './src/item/book/book.route.js';
 
 const router = express.Router();
 
@@ -12,5 +13,6 @@ router.use('/auth', authRoute);
 router.use('/users', userRoute);
 router.use('/teams', teamRoute);
 router.use('/items', itemRoute);
+router.use('/books', bookRoute);
 
 export default router;

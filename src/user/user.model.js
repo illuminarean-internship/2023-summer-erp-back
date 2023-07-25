@@ -11,6 +11,22 @@ const UserSchema = new mongoose.Schema({
     type : String, 
     required: true
   },
+  project: {
+    type : [String], 
+    required: false,
+    default:[]
+  },
+  field: {
+    type : String, 
+    required: false,
+    default:""
+  },
+  books : {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Book',
+    required: true,
+    default: []
+  },
   numOfAssets: {
     type:Number,
     default: 0,
@@ -33,11 +49,11 @@ UserSchema.method({
 });
 
 UserSchema.statics = {
-  list: function ({ skip = 0, limit = 50 } = {}) {
+  list: function ({ /*skip = 0, limit = 50*/ } = {}) {
     return this.find({})
       .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit)
+     // .skip(+skip)
+     // .limit(+limit)
       .exec();
   },
 

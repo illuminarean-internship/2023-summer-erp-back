@@ -61,7 +61,7 @@ BookSchema.statics = {
   get: function (id) {
     return this.findById(id).exec();
   },
-
+/*
   updateContents: function (_id, name, purchaseDate, price, remarks ) {
     return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
   },
@@ -69,7 +69,7 @@ BookSchema.statics = {
   updateLocation: function (_id, teamName, location, userId ) {
     return this.updateOne({ _id }, {  $set: { teamName: teamName, location: location, userId: userId}}).exec();
   },
-
+*/
   delete: function (_id) {
     return this.deleteOne({ _id }).exec();
   }

@@ -11,7 +11,7 @@ const list = async (req, res, next) => {
 
     const booklist = await Promise.all(
       books.map(async (item) => {
-        const { name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
         const user = await User.get(userId);
         const location = user.name;
         let teamName = "";
@@ -19,7 +19,7 @@ const list = async (req, res, next) => {
         const team = await Team.get(user.teamId);
         teamName = team.name;}
         // Rearrange the keys, add the new key, and create a new object
-        return { name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
       })
     );
     res.json(booklist);

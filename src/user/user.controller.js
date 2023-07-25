@@ -27,7 +27,7 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { name, teamName } = req.body;
+    const { name, teamName, project, field } = req.body;
     if(name===teamName) return next(new APIError(`wrong access: ${teamName} is the team name`, httpStatus.NOT_ACCEPTABLE));
     if(!name||!teamName) return next(new APIError(`U should fill name and teamName`, httpStatus.NOT_ACCEPTABLE));
 
@@ -38,7 +38,9 @@ const create = async (req, res, next) => {
       //if not, return error
       return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
     }
-    const user = new User({ name: name, teamName: teamName });
+    const user = new User({ name: name, teamName: teamName});
+    if(project) user.project = project;
+    if(field) user.field = field;
     const savedUser = await user.save();
     const newMember = {userName : name, userId : savedUser._id};
     teamObj.members.push(newMember);

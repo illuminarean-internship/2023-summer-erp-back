@@ -42,7 +42,7 @@ const BookSchema = new mongoose.Schema({
       ref: 'User',
       required: false 
     },
-    archive:{
+    log:{
       type: [String],
       required:false,
       default:[]

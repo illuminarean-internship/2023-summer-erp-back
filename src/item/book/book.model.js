@@ -7,42 +7,72 @@ const BookSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-     Team:{
-      type: mongoose.Schema.Types.ObjectId,
-          ref: 'Team',
-          required: false
+    purchaseDate: {
+      type: Date,
+      required: true
     },
-    Location:{
+    price:{
+      type: Number,
+      required:true
+    },
+    remarks:{
+      type: String,
+      required: false,
+      default: ""
+    },
+    //Additional info,
+    isUnreserved:{
+      type: Boolean,
+      default: false
+    },
+    isArchived:{
+      type: Boolean,
+      default: false
+    },
+    userId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
     },
-    Purchase_date: {
-      type: Date,
-      required: true
-    },
-     price:{
-      type: Number,
-      required:true
-    },
-     Remarks:{
-      type: String,
-      required: false
-    },
-    //Additional info
-    location_is_team:{
-      type: Boolean,
-      default: false,
-      required: false
-    },
-    Archive:{
+    log:{
       type: [String],
-      required:false
+      required:false,
+      default:[]
     },
     createAt: {
       type: Date,
       default: Date.now
     }
-  });  
+  });
+
+  
+BookSchema.method({
+});
+
+BookSchema.statics = {
+  list: function ({ /*skip = 0, limit = 50*/ } = {}) {
+    return this.find({})
+      .sort({ createdAt: -1 })
+     // .skip(+skip)
+     // .limit(+limit)
+      .exec();
+  },
+
+  get: function (id) {
+    return this.findById(id).exec();
+  },
+/*
+  updateContents: function (_id, name, purchaseDate, price, remarks ) {
+    return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
+  },
+
+  updateLocation: function (_id, teamName, location, userId ) {
+    return this.updateOne({ _id }, {  $set: { teamName: teamName, location: location, userId: userId}}).exec();
+  },
+*/
+  delete: function (_id) {
+    return this.deleteOne({ _id }).exec();
+  }
+};
 
 export default mongoose.model('Book', BookSchema);

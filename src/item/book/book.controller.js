@@ -4,6 +4,7 @@ import User from '../../user/user.model.js';
 import Team from '../../user/team.model.js';
 import Book from './book.model.js';
 
+
 const list = async (req, res, next) => {
   try {
     const { limit = 50, skip = 0 } = req.query;
@@ -23,6 +24,32 @@ const list = async (req, res, next) => {
       })
     );
     res.json(booklist);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+const filterUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const books = await Book.list();
+    //change this line
+    const userbooks = await books.filter((item)=>item.userId.equals(userId));
+    const userbooklist = await Promise.all(
+      userbooks.map(async (item) => {
+        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+        const user = await User.get(userId);
+        const location = user.name;
+        let teamName = "";
+        if(user.teamId){
+        const team = await Team.get(user.teamId);
+        teamName = team.name;}
+        // Rearrange the keys, add the new key, and create a new object
+        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+      })
+    );
+    res.json(userbooklist);
   } catch (err) {
     next(err);
   }
@@ -149,5 +176,6 @@ export default {
   get,
   create,
   update,
-  remove
+  remove,
+  filterUser
 };

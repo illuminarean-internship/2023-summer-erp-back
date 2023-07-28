@@ -3,54 +3,8 @@ import APIError from '../../helpers/apiErrorHelper.js';
 import User from '../../user/user.model.js';
 import Team from '../../user/team.model.js';
 import Book from './book.model.js';
-
-//  "2023. 8. 2.-2023. 8. 2./Office/Remark1", -> object  
-function parseToObjectList(stringList) {
-  const objectList = [];
-
-  for (let index = 0; index < stringList.length; index++) {
-    const splitedStr= stringList[index].split('/');
-    const rowId = index;
-    const startDate =splitedStr[0]? convertDateString(splitedStr[0]):null;
-    const endDate = splitedStr[1]? convertDateString(splitedStr[0]): null;
-    const historyLocation =splitedStr[2]? splitedStr[2]: null;
-    const historyRemark = splitedStr[3]? splitedStr[3]: "";
-
-      const parsedObject = {
-        //rowId,
-        startDate,
-        endDate,
-        historyLocation,
-        historyRemark,
-      };
-
-      objectList.push(parsedObject);
-    }
-  return objectList;
-}
-
-function convertDateString(dateString) {
-  const parts = dateString.split('.').map(part => part.trim());
-  const year = parts[0];
-  const month = parts[1].padStart(2, '0');
-  const day = parts[2].padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
-
-//object -> "2023. 8. 2./2023. 8. 2./Office/Lost"
-function parseToStringList(objList) {
-  return objList.map((obj) => {
-    const { startDate, endDate, historyLocation, historyRemark } = obj;
-    const startDateString = startDate? new Date(startDate).toLocaleDateString()+'/': '';
-    const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'/' : '';
-    const locationString = historyLocation ? `${historyLocation}/` : '';
-    const remarkString = historyRemark ? `${historyRemark}` : '';
-
-    return `${startDateString}${endDateString}${locationString}${remarkString}`;
-  });
-}
+import { parseToObjectList , parseToStringList } from '../history.function.js';
+import {checkLocation} from "../sub.function.js"
 
 const list = async (req, res, next) => {
   try {
@@ -96,7 +50,7 @@ const get = async (req, res, next) => {
       let team = "";
       if(user.teamId){
       const teamObj = await Team.get(user.teamId);
-      teamName = teamObj.name;}
+      team = teamObj.name;}
       const title = name;
       let history=[];
       //res.json(log);
@@ -109,19 +63,6 @@ const get = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-};
-
-const checkLocation = (location) => {
-    let isUnreserved =false;
-    let isArchived = false;
-
-    if(location=="Office"){
-        isUnreserved=true;
-    }
-    if(location=="Resold"||location=="Disuse"){
-        isArchived=true;
-    }
-    return {isUnreserved,isArchived};
 };
 
 const create = async (req, res, next) => {
@@ -159,7 +100,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { bookId } = req.params;
-    const { name, location, purchaseDate, price, remarks, isLogged , endDate, startDate, history, locationRemarks } = req.body;
+    const { name, location, purchaseDate, purchasedFrom, price, remarks, isLogged , endDate, startDate, history, locationRemarks } = req.body;
 
     //Hidden problem!!same user name??? => should be ID 
     //validation : bookId is valid? & location is valid?
@@ -171,6 +112,7 @@ const update = async (req, res, next) => {
     //if contents changed-> just updated
     if(name) book.name=name;
     if(purchaseDate) book.purchaseDate= purchaseDate; 
+    if(purchasedFrom) book.purchasedFrom =purchasedFrom;
     if(price) book.price=price;
     if(remarks) book.remarks=remarks;
 

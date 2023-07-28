@@ -2,7 +2,6 @@ import express from 'express';
 import { validate } from 'express-validation';
 import reqValidation from '../config/reqValidation.config.js';
 import userController from './user.controller.js';
-import bookController from '../item/book/book.controller.js';
 
 const router = express.Router();
 

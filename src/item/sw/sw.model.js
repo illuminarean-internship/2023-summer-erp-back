@@ -2,56 +2,56 @@
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-
-const SWSchema = new mongoose.Schema({
+const SwSchema = new mongoose.Schema({
     name: {
       type: String,
       required: true
     },
-    category: {
-      type: String,
+    purchaseDate: {
+      type: Date,
       required: true
     },
-    unit_price:{
+    unitPrice:{
       type: Number,
       required:true
     },
     amount:{
       type: Number,
-      default:1,
-      required:true
+      required:true,
+      default:1
     },
-    Currency:{
-      type: Number,
-      required:true
+    remarks:{
+      type: String,
+      required: false,
+      default: ""
     },
-    Purchase_date: {
-      type: Date,
-      required: true
+    currency:{
+      type: String,
+      required: false,
     },
-    User:{
+    reference:{
+      type: String,
+      required: false,
+      default: ""
+    },
+    //Additional info,
+    isUnreserved:{
+      type: Boolean,
+      default: false
+    },
+    isArchived:{
+      type: Boolean,
+      default: false
+    },
+    userId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
     },
-     Remarks:{
-      type: String,
-      required: false
-    },
-    //Additional info
-    location_is_team:{
-      type: Boolean,
-      default: false,
-      required: false
-    },
-    Team:{
-      type: mongoose.Schema.Types.ObjectId,
-          ref: 'Group', //should be updated to Group
-          required: false
-    },
-    Archive:{
+    log:{
       type: [String],
-      required:false
+      required:false,
+      default:[]
     },
     createAt: {
       type: Date,
@@ -59,4 +59,30 @@ const SWSchema = new mongoose.Schema({
     }
   });
 
-export default mongoose.model('SW', SWSchema);
+  
+SwSchema.method({
+});
+
+SwSchema.statics = {
+  list: function ({ /*skip = 0, limit = 50*/ } = {}) {
+    return this.find({})
+      .sort({ createdAt: -1 })
+     // .skip(+skip)
+     // .limit(+limit)
+      .exec();
+  },
+
+  get: function (id) {
+    return this.findById(id).exec();
+  },
+/*
+  update: function (_id, name, purchaseDate, price, remarks ) {
+    return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
+  },
+*/
+  delete: function (_id) {
+    return this.deleteOne({ _id }).exec();
+  }
+};
+
+export default mongoose.model('SW', SwSchema);

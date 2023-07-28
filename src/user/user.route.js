@@ -16,7 +16,4 @@ router.route('/user/:userId')
   .put(userController.update)
   .delete(userController.remove);
 
-router.route('/book/:userId')
-  .get(bookController.filterUser);
-
 export default router;

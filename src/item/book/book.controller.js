@@ -4,52 +4,81 @@ import User from '../../user/user.model.js';
 import Team from '../../user/team.model.js';
 import Book from './book.model.js';
 
+//  "2023. 8. 2.-2023. 8. 2./Office/Remark1", -> object  
+function parseToObjectList(stringList) {
+  const objectList = [];
+
+  for (let index = 0; index < stringList.length; index++) {
+    const splitedStr= stringList[index].split('/');
+    const rowId = index;
+    const startDate =splitedStr[0]? convertDateString(splitedStr[0]):null;
+    const endDate = splitedStr[1]? convertDateString(splitedStr[0]): null;
+    const historyLocation =splitedStr[2]? splitedStr[2]: null;
+    const historyRemark = splitedStr[3]? splitedStr[3]: "";
+
+      const parsedObject = {
+        //rowId,
+        startDate,
+        endDate,
+        historyLocation,
+        historyRemark,
+      };
+
+      objectList.push(parsedObject);
+    }
+  return objectList;
+}
+
+function convertDateString(dateString) {
+  const parts = dateString.split('.').map(part => part.trim());
+  const year = parts[0];
+  const month = parts[1].padStart(2, '0');
+  const day = parts[2].padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+
+//object -> "2023. 8. 2./2023. 8. 2./Office/Lost"
+function parseToStringList(objList) {
+  return objList.map((obj) => {
+    const { startDate, endDate, historyLocation, historyRemark } = obj;
+    const startDateString = startDate? new Date(startDate).toLocaleDateString()+'/': '';
+    const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'/' : '';
+    const locationString = historyLocation ? `${historyLocation}/` : '';
+    const remarkString = historyRemark ? `${historyRemark}` : '';
+
+    return `${startDateString}${endDateString}${locationString}${remarkString}`;
+  });
+}
 
 const list = async (req, res, next) => {
   try {
-    const { limit = 50, skip = 0 } = req.query;
-    const books = await Book.list({ limit, skip });
-
-    const booklist = await Promise.all(
+    const query = req.query;
+    const { title, team, location } = req.query;
+    if(title){delete query.title; query.name=title;}
+    if(team){delete query.team;}
+    if(location){delete query.location;}
+    const books = await Book.find(query);
+    let bookList = await Promise.all(
       books.map(async (item) => {
-        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+        const { _id, name, purchaseDate, purchasedFrom, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
         const user = await User.get(userId);
         const location = user.name;
-        let teamName = "";
+        let team = "";
         if(user.teamId){
-        const team = await Team.get(user.teamId);
-        teamName = team.name;}
+        const teamObj = await Team.get(user.teamId);
+        team = teamObj.name;}
+        const title = name;
+        let history=[];
+        if(log.length!=0){history= parseToObjectList(log);}
         // Rearrange the keys, add the new key, and create a new object
-        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+        return { _id, title, team, location, purchaseDate, purchasedFrom, price, isUnreserved, isArchived, userId, history, createAt };
       })
     );
-    res.json(booklist);
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-const filterUser = async (req, res, next) => {
-  try {
-    const { userId } = req.params;
-    const books = await Book.list();
-    //change this line
-    const userbooks = await books.filter((item)=>item.userId.equals(userId));
-    const userbooklist = await Promise.all(
-      userbooks.map(async (item) => {
-        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
-        const user = await User.get(userId);
-        const location = user.name;
-        let teamName = "";
-        if(user.teamId){
-        const team = await Team.get(user.teamId);
-        teamName = team.name;}
-        // Rearrange the keys, add the new key, and create a new object
-        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
-      })
-    );
-    res.json(userbooklist);
+   if(team) bookList = await bookList.filter((item)=>item.team==team);
+   if(location) bookList= await bookList.filter((item)=>item.name==location);
+    res.json(bookList);
   } catch (err) {
     next(err);
   }
@@ -59,7 +88,22 @@ const get = async (req, res, next) => {
   try {
     const { bookId } = req.params;
     const book = await Book.get(bookId);
-    if (book) return res.json(book);
+    if (book){ 
+      const item = book;
+      const { _id, name, purchaseDate, purchasedFrom, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+      const user = await User.get(userId);
+      const location = user.name;
+      let team = "";
+      if(user.teamId){
+      const teamObj = await Team.get(user.teamId);
+      teamName = teamObj.name;}
+      const title = name;
+      let history=[];
+      //res.json(log);
+      if(log.length!=0){history= parseToObjectList(log);}
+      // Rearrange the keys, add the new key, and create a new object
+      const bookInfo= { _id, title, team, location, purchaseDate, purchasedFrom, price, isUnreserved, isArchived, userId, history, createAt };
+      return res.json(bookInfo);}
     const err = new APIError('No such book exists!', httpStatus.NOT_FOUND);
     return next(err);
   } catch (err) {
@@ -82,7 +126,7 @@ const checkLocation = (location) => {
 
 const create = async (req, res, next) => {
   try {
-    const { name, location, purchaseDate, price, remarks } = req.body;
+    const { title, location, purchaseDate, purchasedFrom, price, remarks, history } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
@@ -95,7 +139,8 @@ const create = async (req, res, next) => {
 
     //fill Bookschema
     const userId = userObj._id;
-    const book = new Book({ name, purchaseDate, price, userId});
+    const name = title;
+    const book = new Book({ name, purchaseDate, purchasedFrom, price, userId});
     if(remarks) book.remarks = remarks;
     const {isUnreserved,isArchived} = checkLocation(location);
     if(isUnreserved) book.isUnreserved=true;
@@ -114,7 +159,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { bookId } = req.params;
-    const { name, location, purchaseDate, price, remarks, isLogged } = req.body;
+    const { name, location, purchaseDate, price, remarks, isLogged , endDate, startDate, history, locationRemarks } = req.body;
 
     //Hidden problem!!same user name??? => should be ID 
     //validation : bookId is valid? & location is valid?
@@ -130,14 +175,12 @@ const update = async (req, res, next) => {
     if(remarks) book.remarks=remarks;
 
     //if location changed-> update user schema and logg
-    if(location){
-      //log
-      if(isLogged){
-        if(book.archive.empty()){
-
-        }
-      }
+    if(location&&!validation._id.equals(book.userId)){
       // update user schema
+      const {isUnreserved,isArchived} = checkLocation(location);
+      if(isUnreserved) book.isUnreserved=true;
+      if(isArchived) book.isArchived=true;
+
       const userObj = await User.get(book.userId);
       userObj.numOfAssets= userObj.numOfAssets-1;
       await userObj.save();
@@ -146,7 +189,25 @@ const update = async (req, res, next) => {
       new_userObj.numOfAssets = userObj.numOfAssets+1;
       await new_userObj.save();
 
-      book.userId=validation._id;
+      book.userId=new_userObj._id;
+
+      //log
+      if(isLogged){
+        if(book.log.length==0){
+          book.log.push(book.purchaseDate.toLocaleDateString()+'/');
+        }
+        let endDateLog = Date.now;
+        let startDateLog = Date.now;
+        if(endDate) {endDateLog =new Date(endDate);}
+        if(startDate) {startDateLog= new Date(startDate); }
+        let historyRemarkss = "";
+        if(locationRemarks) historyRemarkss= locationRemarks;
+        book.log[book.log.length-1]= book.log[book.log.length-1]+endDateLog.toLocaleDateString()+'/'+ userObj.name+ '/'+historyRemarkss;
+        book.log[book.log.length]=(startDateLog.toLocaleDateString()+"/");
+      }
+    }
+    if(history){
+      book.log= parseToStringList(history);
     }
     const bookSaved = await book.save();
     return res.json(bookSaved);
@@ -176,6 +237,5 @@ export default {
   get,
   create,
   update,
-  remove,
-  filterUser
+  remove
 };

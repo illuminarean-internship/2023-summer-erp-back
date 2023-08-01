@@ -62,7 +62,7 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { name, purchaseDate, unitPrice, amount, currency,remarks, reference, user } = req.body;
+    const { name, purchaseDate, unitPrice, amount, currency,remarks, reference, user, history } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
@@ -80,6 +80,7 @@ const create = async (req, res, next) => {
     const {isUnreserved,isArchived} = checkLocation(user);
     if(isUnreserved) sw.isUnreserved=true;
     if(isArchived) sw.isArchived=true;
+    if(history) sw.log=parseToStringList(history);
     const savedSw = await sw.save();
 
     //update item list of user

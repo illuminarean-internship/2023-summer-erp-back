@@ -8,22 +8,20 @@ import HW from './hw.model.js';
 const list = async (req, res, next) => {
   try {
     const { limit = 50, skip = 0 } = req.query;
-    const books = await HW.list({ limit, skip });
+    const HWs = await HW.list({ limit, skip });
 
-    const booklist = await Promise.all(
-      books.map(async (item) => {
-        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+    const HWlist = await Promise.all(
+      HWs.map(async (item) => {
+        const { _id, deviceImage, category, serialNumber, purchaseFrom, warranty, price, illumiSerial, color, RAM, SSD, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
         const user = await User.get(userId);
+
         const location = user.name;
-        let teamName = "";
-        if(user.teamId){
-        const team = await Team.get(user.teamId);
-        teamName = team.name;}
+
         // Rearrange the keys, add the new key, and create a new object
-        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+        return { _id, deviceImage, category, serialNumber, purchaseFrom, warranty, price, illumiSerial, color, RAM, SSD, isUnreserved, isArchived, userId, log, createAt, location }; // which to return?
       })
     );
-    res.json(booklist);
+    res.json(HWlist);
   } catch (err) {
     next(err);
   }
@@ -33,12 +31,12 @@ const list = async (req, res, next) => {
 const filterUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const books = await Book.list();
+    const HWs = await HW.list();
     //change this line
-    const userbooks = await books.filter((item)=>item.userId.equals(userId));
-    const userbooklist = await Promise.all(
-      userbooks.map(async (item) => {
-        const { _id, name, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
+    const userHWs = await HWs.filter((item)=>item.userId.equals(userId));
+    const userHWlist = await Promise.all(
+      userhws.map(async (item) => {
+        const { _id, deviceImage, category, serialNumber, purchaseFrom, warranty, price, illumiSerial, color, RAM, SSD, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object
         const user = await User.get(userId);
         const location = user.name;
         let teamName = "";
@@ -46,10 +44,10 @@ const filterUser = async (req, res, next) => {
         const team = await Team.get(user.teamId);
         teamName = team.name;}
         // Rearrange the keys, add the new key, and create a new object
-        return { _id, name, teamName, location, purchaseDate, price, isUnreserved, isArchived, userId, log, createAt };
+        return { _id, deviceImage, category, serialNumber, purchaseFrom, warranty, price, illumiSerial, color, RAM, SSD, isUnreserved, isArchived, userId, log, createAt, location }; // which to return?
       })
     );
-    res.json(userbooklist);
+    res.json(userHWlist);
   } catch (err) {
     next(err);
   }
@@ -57,10 +55,10 @@ const filterUser = async (req, res, next) => {
 
 const get = async (req, res, next) => {
   try {
-    const { bookId } = req.params;
-    const book = await Book.get(bookId);
-    if (book) return res.json(book);
-    const err = new APIError('No such book exists!', httpStatus.NOT_FOUND);
+    const { HWId } = req.params;
+    const HW = await HW.get(HWId);
+    if (HW) return res.json(HW);
+    const err = new APIError('No such HW exists!', httpStatus.NOT_FOUND);
     return next(err);
   } catch (err) {
     return next(err);
@@ -93,19 +91,19 @@ const create = async (req, res, next) => {
       return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
     }
 
-    //fill Bookschema
+    //fill HWschema
     const userId = userObj._id;
-    const book = new Book({ name, purchaseDate, price, userId});
-    if(remarks) book.remarks = remarks;
+    const HW = new HW({ name, purchaseDate, price, userId});
+    if(remarks) HW.remarks = remarks;
     const {isUnreserved,isArchived} = checkLocation(location);
-    if(isUnreserved) book.isUnreserved=true;
-    if(isArchived) book.isArchived=true;
-    const savedBook = await book.save();
+    if(isUnreserved) HW.isUnreserved=true;
+    if(isArchived) HW.isArchived=true;
+    const savedHW = await HW.save();
 
     //update item list of user
     userObj.numOfAssets=userObj.numOfAssets+1;
     await userObj.save();
-    return res.json(savedBook);
+    return res.json(savedHW);
   } catch (err) {
     return next(err);
   }
@@ -113,43 +111,43 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const { bookId } = req.params;
+    const { HWId } = req.params;
     const { name, location, purchaseDate, price, remarks, isLogged } = req.body;
 
-    //Hidden problem!!same user name??? => should be ID
-    //validation : bookId is valid? & location is valid?
-    const book = await Book.get(bookId);
-    if(!book) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
+    //Hidden problem!!same user name??? => should be ID 
+    //validation : hwId is valid? & location is valid?
+    const hw = await hw.get(HWId);
+    if(!hw) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
     const validation = await User.findOne({name: location}).exec();
     if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
-
+    
     //if contents changed-> just updated
-    if(name) book.name=name;
-    if(purchaseDate) book.purchaseDate= purchaseDate;
-    if(price) book.price=price;
-    if(remarks) book.remarks=remarks;
+    if(name) hw.name=name;
+    if(purchaseDate) hw.purchaseDate= purchaseDate; 
+    if(price) hw.price=price;
+    if(remarks) hw.remarks=remarks;
 
     //if location changed-> update user schema and logg
     if(location){
       //log
       if(isLogged){
-        if(book.archive.empty()){
+        if(hw.archive.empty()){
 
         }
       }
       // update user schema
-      const userObj = await User.get(book.userId);
+      const userObj = await User.get(hw.userId);
       userObj.numOfAssets= userObj.numOfAssets-1;
       await userObj.save();
-
+      
       const new_userObj = validation; // and then push userObj to new Team
       new_userObj.numOfAssets = userObj.numOfAssets+1;
       await new_userObj.save();
 
-      book.userId=validation._id;
+      hw.userId=validation._id;
     }
-    const bookSaved = await book.save();
-    return res.json(bookSaved);
+    const hwSaved = await hw.save();
+    return res.json(hwSaved);
   } catch (err) {
     return next(err);
   }
@@ -157,13 +155,13 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    const { bookId } = req.params;
-    const book = await Book.get(bookId);
-    if(!book) return next( new APIError('No such book exists!', httpStatus.NOT_FOUND));
-    const userObj = await User.get(book.userId);
+    const { HWId } = req.params;
+    const hw = await hw.get(HWId);
+    if(!hw) return next( new APIError('No such HW exists!', httpStatus.NOT_FOUND));
+    const userObj = await User.get(hw.userId);
     userObj.numOfAssets= userObj.numOfAssets-1;
     await userObj.save();
-    const result = await Book.delete(bookId);
+    const result = await HW.delete(HWId);
     return res.json(result);
   }
   catch (err) {

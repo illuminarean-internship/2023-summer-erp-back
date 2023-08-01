@@ -3,11 +3,11 @@
 import mongoose from 'mongoose';
 
 const HWSchema = new mongoose.Schema({
-    device_image:{
+    deviceImage:{
       type: String,
       required: true
     },
-    modelname: {
+    modelName: {
       type: String,
       required: true
     },
@@ -15,24 +15,24 @@ const HWSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    SerialNumber:{
+    serialNumber:{
       type:String,
       required: true
     },
-    Location:{
+    location:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
     },
-    Purchase_date: {
+    purchaseDate: {
       type: Date,
       required: true
     },
-    Purchase_from: {
+    purchaseFrom: {
       type :String,
       required :true
     },
-    Warranty:{
+    WScriptarranty:{
       type:String,
       required:false
     },
@@ -40,7 +40,7 @@ const HWSchema = new mongoose.Schema({
       type: Number,
       required:true
     },
-    illumi_Serial :{
+    illumiSerial :{
       type: String,
       required: false
     },
@@ -56,22 +56,22 @@ const HWSchema = new mongoose.Schema({
       type: Number,
       required: false
     },
-     Remarks:{
+    remarks:{
       type: String,
       required: false
     },
     //Additional info
-    location_is_team:{
+    locationIsTeam:{
       type: Boolean,
       default: false,
       required: false
     },
-    Team:{
+    team:{
       type: mongoose.Schema.Types.ObjectId,
           ref: 'Group', //should be updated to Group
           required: false
     },
-    Archive:{
+    archive:{
       type: [String],
       required:false
     },

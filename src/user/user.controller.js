@@ -65,7 +65,7 @@ const create = async (req, res, next) => {
     }
     const projectIdList = new Array();
     for (let i = 0; i < project.length; i++){
-      let projObj = await Project.getByName(project[i])
+      let projObj = await Project.getByName(project[i]);
       if (!projObj) {
         const errorMessage = `The projectname ${project[i]} is not existing!`;
         //if not, return error

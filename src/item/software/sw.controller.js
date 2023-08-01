@@ -12,7 +12,7 @@ const list = async (req, res, next) => {
     if(totalPrice){delete query.totalPrice;}
     if(user){
         delete query.user;
-        const userObj = await User.getByName(location).exec();
+        const userObj = await User.getByName(location);
         if (!userObj) { res.json([]);}
         query.userId = userObj._id;
     }

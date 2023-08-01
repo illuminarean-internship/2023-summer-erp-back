@@ -71,7 +71,7 @@ const create = async (req, res, next) => {
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
-    const userObj = await User.getByName(location)
+    const userObj = await User.getByName(location);
     if (!userObj) {
       const errorMessage = `The location ${location} is not existing!`;
       //if not, return error
@@ -107,7 +107,7 @@ const update = async (req, res, next) => {
     //validation : bookId is valid? & location is valid?
     const book = await Book.get(bookId);
     if(!book) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
-    const validation = await User.getByName(name)
+    const validation = await User.getByName(name);
     if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
     
     //if contents changed-> just updated

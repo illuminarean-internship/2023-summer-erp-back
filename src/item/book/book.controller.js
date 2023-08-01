@@ -107,7 +107,7 @@ const update = async (req, res, next) => {
     //validation : bookId is valid? & location is valid?
     const book = await Book.get(bookId);
     if(!book) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
-    const validation = await User.getByName(name);
+    const validation = await User.getByName(location);
     if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
     
     //if contents changed-> just updated

@@ -12,7 +12,7 @@ const list = async (req, res, next) => {
     if(totalPrice){delete query.totalPrice;}
     if(user){
         delete query.user;
-        const userObj = await User.findOne({name: location}).exec();
+        const userObj = await User.getByName(location).exec();
         if (!userObj) { res.json([]);}
         query.userId = userObj._id;
     }
@@ -66,7 +66,7 @@ const create = async (req, res, next) => {
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
-    const userObj = await User.findOne({name: user}).exec();
+    const userObj = await User.getByName(user).exec();
     if (!userObj) {
       const errorMessage = `The location ${user} is not existing!`;
       //if not, return error
@@ -100,7 +100,7 @@ const update = async (req, res, next) => {
     //validation : itemId is valid? & location is valid?
     const sw = await SW.get(swId);
     if(!sw) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
-    const validation = await User.findOne({name: user}).exec();
+    const validation = await User.getByName(user).exec();
     if(user&&!validation) return next(new APIError(`there is no user named ${user}`, httpStatus.NOT_ACCEPTABLE));
     
     //if contents changed-> just updated

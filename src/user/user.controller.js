@@ -57,7 +57,7 @@ const create = async (req, res, next) => {
     if(!name||!teamName) return next(new APIError(`U should fill name and teamName`, httpStatus.NOT_ACCEPTABLE));
 
     //find the team and projects are existing
-    const teamObj = await Team.findOne({name: teamName}).exec();
+    const teamObj = await Team.getByName(teamName).exec();
     if (!teamObj) {
       const errorMessage = `The teamname ${teamName} is not existing!`;
       //if not, return error
@@ -65,7 +65,7 @@ const create = async (req, res, next) => {
     }
     const projectIdList = new Array();
     for (let i = 0; i < project.length; i++){
-      let projObj = await Project.findOne({name: project[i]}).exec();
+      let projObj = await Project.getByName(project[i]).exec();
       if (!projObj) {
         const errorMessage = `The projectname ${project[i]} is not existing!`;
         //if not, return error
@@ -102,14 +102,14 @@ const update = async (req, res, next) => {
     //validation : userId is valid? & team name is valid & project name is valid?
     const user = await User.get(userId);
     if(!user) return next(new APIError('No such user exists!', httpStatus.NOT_FOUND));
-    const new_teamObj = await Team.findOne({name: teamName}).exec();
+    const new_teamObj = await Team.getByName(teamName).exec();
     if(name&&name==teamName) return next(new APIError(`wrong access: ${teamName} is the team name`, httpStatus.NOT_ACCEPTABLE));
     if(teamName&&!new_teamObj) return next(new APIError(`there is no team named ${teamName}`, httpStatus.NOT_ACCEPTABLE));
     const projectIdList = new Array();
     if(project){for (let i = 0; i < project.length; i++){
-      let projObj = await Project.findOne({name: project[i]}).exec();
+      let projObj = await Project.getByName(name).exec();
       if (!projObj) {
-        const errorMessage = `The projectname ${project[i]} is not existing!`;r
+        const errorMessage = `The projectname ${project[i]} is not existing!`;
         return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
       }
       else{  projectIdList.push(projObj._id);}
@@ -161,9 +161,9 @@ const remove = async (req, res, next) => {
       teamObj.numOfMembers = teamObj.numOfMembers-1;
       await teamObj.save();
       //proj side update
-      for (let i = 0; i < user.projectIdList.length; i++){
-        let projObj = await Project.get(user.projectIdList[i])
-        projObj.numOfMembers =projObj.numOfMembers-1;
+      for (const projectId of user.projectIdList) {
+        let projObj = await Project.get(projectId);
+        projObj.numOfMembers = projObj.numOfMembers - 1;
         await projObj.save();
       }
       //delete user

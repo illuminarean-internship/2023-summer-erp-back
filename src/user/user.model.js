@@ -56,6 +56,10 @@ UserSchema.statics = {
     return this.findById(id).exec();
   },
 
+  getByName: function (name) {
+    return this.findOne({name:name}).exec();
+  },
+
   rename: function (_id, name) {
     return this.updateOne({ _id }, { $set: { name: name} }).exec();
   },

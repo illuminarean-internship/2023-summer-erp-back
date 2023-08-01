@@ -18,5 +18,5 @@ router.use('/projs', projRoute);
 
 
 router.use('/books', bookRoute);
-router.use('/sws', swRoute);
+router.use('/software', swRoute);
 export default router;

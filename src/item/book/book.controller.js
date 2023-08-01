@@ -86,6 +86,7 @@ const create = async (req, res, next) => {
     const {isUnreserved,isArchived} = checkLocation(location);
     if(isUnreserved) book.isUnreserved=true;
     if(isArchived) book.isArchived=true;
+    if(history) book.log=parseToStringList(history);
     const savedBook = await book.save();
 
     //update item list of user

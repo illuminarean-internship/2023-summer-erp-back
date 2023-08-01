@@ -38,9 +38,9 @@ export function parseToObjectList(stringList) {
  export function parseToStringList(objList) {
     return objList.map((obj) => {
       const { startDate, endDate, historyLocation, historyRemark } = obj;
-      const startDateString = startDate? new Date(startDate).toLocaleDateString()+'/': '';
-      const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'/' : '';
-      const locationString = historyLocation ? `${historyLocation}/` : '';
+      const startDateString = startDate? new Date(startDate).toLocaleDateString()+'/': '/';
+      const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'/' : '/';
+      const locationString = historyLocation ? `${historyLocation}/` : '/';
       const remarkString = historyRemark ? `${historyRemark}` : '';
   
       return `${startDateString}${endDateString}${locationString}${remarkString}`;

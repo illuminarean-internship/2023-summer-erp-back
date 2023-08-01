@@ -17,7 +17,7 @@ const list = async (req, res, next) => {
         query.userId = userObj._id;
     }
     
-    const sws = await SW.find(query);
+    const sws = await SW.findQuery(query);
     let swList = await Promise.all(
       sws.map(async (item) => {
         const { _id, name, purchaseDate, unitPrice, remarks, amount, reference, currency,  isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object

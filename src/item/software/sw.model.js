@@ -75,6 +75,10 @@ SwSchema.statics = {
   get: function (id) {
     return this.findById(id).exec();
   },
+
+  findQuery: function (query) {
+    return this.find(query).exec();
+  },
 /*
   update: function (_id, name, purchaseDate, price, remarks ) {
     return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();

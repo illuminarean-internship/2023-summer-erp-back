@@ -13,7 +13,7 @@ const list = async (req, res, next) => {
     if(title){delete query.title; query.name=title;}
     if(team){delete query.team;}
     if(location){delete query.location;}
-    const books = await Book.find(query);
+    const books = await Book.findQuery(query);
     let bookList = await Promise.all(
       books.map(async (item) => {
         const { _id, name, purchaseDate, purchasedFrom, price, isUnreserved, isArchived, userId, log, createAt } = item; // Destructure the original object

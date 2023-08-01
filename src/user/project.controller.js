@@ -30,7 +30,7 @@ const get = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { name } = req.body;
-    let alreadyHave = await Project.getByName(name).exec();
+    let alreadyHave = await Project.getByName(name);
     if(alreadyHave) return next(new APIError('The project already exists!', httpStatus.NOT_ACCEPTABLE));
     const project = new Project({ name });
     const savedProject= await project.save();
@@ -44,7 +44,7 @@ const update = async (req, res, next) => {
   try {
     const { projectId } = req.params;
     const { name } = req.body;
-    let alreadyHave = await Project.getByName(name).exec();
+    let alreadyHave = await Project.getByName(name);
     if(alreadyHave) return next(new APIError('The project already exists!', httpStatus.NOT_ACCEPTABLE));
     
     const project = await Project.update(projectId, name);

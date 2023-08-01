@@ -44,8 +44,8 @@ UserSchema.method({
 });
 
 UserSchema.statics = {
-  list: function ({ /*skip = 0, limit = 50*/ } = {}) {
-    return this.find({})
+  list: function () {
+    return this.find()
       .sort({ createdAt: -1 })
      // .skip(+skip)
      // .limit(+limit)

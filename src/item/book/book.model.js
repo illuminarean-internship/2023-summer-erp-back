@@ -54,7 +54,7 @@ BookSchema.method({
 });
 
 BookSchema.statics = {
-  list: function ({ /*skip = 0, limit = 50*/ } = {}) {
+  list: function () {
     return this.find({})
       .sort({ createdAt: -1 })
      // .skip(+skip)

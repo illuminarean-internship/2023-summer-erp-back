@@ -40,6 +40,10 @@ TeamSchema.statics = {
     return this.findById(_id).exec();
   },
 
+  getbyName: function (name) {
+    return this.findOne({name:name}).exec();
+  },
+
   update: function (_id, name) {
     return this.updateOne({ _id }, { name }).exec();
   },

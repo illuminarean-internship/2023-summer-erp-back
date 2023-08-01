@@ -30,7 +30,7 @@ const get = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { name } = req.body;
-    let alreadyHave = await Team.findOne({name: name}).exec();
+    let alreadyHave = await Team.getByName(name);
     if(alreadyHave) return next(new APIError('The team already exists!', httpStatus.NOT_ACCEPTABLE));
     const team = new Team({ name });
     await team.save();
@@ -50,7 +50,7 @@ const update = async (req, res, next) => {
   try {
     const { teamId } = req.params;
     const { name } = req.body;
-    let alreadyHave = await Team.findOne({name: name}).exec();
+    let alreadyHave = await Team.getByName(name);
     if(alreadyHave) return next(new APIError('The team already exists!', httpStatus.NOT_ACCEPTABLE));
     
 

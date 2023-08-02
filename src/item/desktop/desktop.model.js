@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 
 const DesktopSchema= new mongoose.Schema({
-    illumi_Serial:{
+    illumiSerial:{
       type: String,
       required: true
     },
@@ -11,11 +11,11 @@ const DesktopSchema= new mongoose.Schema({
       type: String,
       required: false
     },
-    Mainboard: {
+    mainboard: {
       type: String,
       required: false
     },
-     Memory:{
+    memory:{
       type: String,
       required: false
     },
@@ -31,15 +31,15 @@ const DesktopSchema= new mongoose.Schema({
       type: String,
       required: false
     },
-    case:{
+     desktopCase:{
       type: String,
       required: false
     },  
-    Purchase_date: {
+    purchaseDate: {
       type: Date,
       required: true
     },
-    Purchase_from: {
+    purchaseFrom: {
       type :String,
       required :true
     }, 
@@ -47,22 +47,22 @@ const DesktopSchema= new mongoose.Schema({
       type :String,
       required :true
     },
-    Location:{
+    location:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
     }, 
-     Remarks:{
+    remarks:{
       type: String,
       required: false
     },
     //Additional info
-    location_is_team:{
+    locationIsTeam:{
       type: Boolean,
       default: false,
       required: false
     },
-    Archive:{
+    archive:{
       type: [String],
       required:false
     },

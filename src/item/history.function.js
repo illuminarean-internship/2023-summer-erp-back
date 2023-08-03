@@ -4,7 +4,7 @@ export function parseToObjectList(stringList) {
     const objectList = [];
   
     for (let index = 0; index < stringList.length; index++) {
-      const splitedStr= stringList[index].split('/');
+      const splitedStr = stringList[index].split('/');
       const rowId = index;
       const startDate =splitedStr[0]? convertDateString(splitedStr[0]):null;
       const endDate = splitedStr[1]? convertDateString(splitedStr[0]): null;

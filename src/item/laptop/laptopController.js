@@ -7,6 +7,12 @@ import { parseToObjectList , parseToStringList } from '../history.function.js';
 import {checkLocation} from "../sub.function.js"
 
 
+
+
+
+
+
+
 const list = async (req, res, next) => {
   try {
     const query = req.query;
@@ -15,12 +21,18 @@ const list = async (req, res, next) => {
     if(location){delete query.location;}
 
 
+
+
+
+
+
+
     const laptops = await Laptop.findQuery(query);
     let laptopList = await Promise.all(
         laptops.map(async (item) => {
           const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-            illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived, 
-            isRepair, archive, createAt } = item;                 
+            illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+            isRepair, archive, createAt, dateAvail, daysLeft } = item;                
             const user = await User.get(userId);
         const location = user.name;
         //let team = "";
@@ -31,8 +43,8 @@ const list = async (req, res, next) => {
         if(archive.length!=0){history= parseToObjectList(archive);}
         // Rearrange the keys, add the new key, and create a new object
         return { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
-          illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived, 
-          isRepair, archive, createAt };
+          illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+          isRepair, archive, createAt, dateAvail, daysLeft };
       })
     );
    //if(team) desktopList = await desktopList.filter((item)=>item.team==team);
@@ -44,6 +56,12 @@ const list = async (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 const get = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
@@ -51,10 +69,16 @@ const get = async (req, res, next) => {
     if (laptop){
 
 
+
+
+
+
+
+
       const item = laptop;
       const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived, 
-        isRepair, archive, createAt } = item;      
+        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+        isRepair, archive, createAt, dateAvail, daysLeft } = item;      
       const user = await User.get(userId);
       const location = user.name;
       //let team = "";
@@ -67,8 +91,8 @@ const get = async (req, res, next) => {
       if(archive.length!=0){history= parseToObjectList(archive);}
       // Rearrange the keys, add the new key, and create a new object
       const laptopInfo= { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
-        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived, 
-        isRepair, archive, createAt };
+        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+        isRepair, archive, createAt, dateAvail, daysLeft };
       return res.json(laptopInfo); }
     const err = new APIError('No such laptop exists!', httpStatus.NOT_FOUND);
     return next(err);
@@ -78,11 +102,24 @@ const get = async (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 const create = async (req, res, next) => {
   try {
     const { category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-    illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history } = req.body;
+    illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history,
+    dateAvail, daysLeft } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
+
+
+
+
+
+
 
 
     //find the team is existing
@@ -94,10 +131,16 @@ const create = async (req, res, next) => {
     }
 
 
+
+
+
+
+
+
     //fill Laptopschema
     const userId = userObj._id;
     const laptop = new Laptop({ category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, userId });
+      illumiSerial, color, purchaseDate, purchaseFrom, userId, dateAvail, daysLeft });
     if(remarks) laptop.remarks = remarks;
     const {isUnreserved,isArchived,isRepair} = checkLocation(location);
     if(isUnreserved) laptop.isUnreserved=true;
@@ -105,6 +148,12 @@ const create = async (req, res, next) => {
     if(isRepair) laptop.isRepair=true;
     if(history) laptop.archive=parseToStringList(history);
     const savedLaptop = await laptop.save();
+
+
+
+
+
+
 
 
     //update item list of user
@@ -117,11 +166,23 @@ const create = async (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 const update = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const { category, location, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, remarks, history } = req.body;
+      illumiSerial, color, purchaseDate, purchaseFrom, remarks, history, dateAvail, daysLeft } = req.body;
+
+
+
+
+
+
 
 
     //Hidden problem!!same user name??? => should be ID
@@ -147,6 +208,13 @@ const update = async (req, res, next) => {
     if(purchaseDate) laptop.purchaseDate= purchaseDate;
     if(purchaseFrom) laptop.purchaseFrom =purchaseFrom;
     if(remarks) laptop.remarks =remarks;
+    if (dateAvail) laptop.dateAvail =dateAvail;
+
+
+
+
+
+
 
 
     //if location changed-> update user schema and archive
@@ -158,6 +226,12 @@ const update = async (req, res, next) => {
       if(isRepair) laptop.isArchived=true;
 
 
+
+
+
+
+
+
       const userObj = await User.get(laptop.userId);
       userObj.numOfAssets= userObj.numOfAssets-1;
       await userObj.save();
@@ -167,7 +241,19 @@ const update = async (req, res, next) => {
       await new_userObj.save();
 
 
+
+
+
+
+
+
       laptop.userId=new_userObj._id;
+
+
+
+
+
+
 
 
     }
@@ -180,8 +266,14 @@ const update = async (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 const remove = async (req, res, next) => {
-  try { 
+  try {
     const { laptopId } = req.params;
     const laptop = await Laptop.get(laptopId);
     if(!laptop) return next( new APIError('No such laptop exists!', httpStatus.NOT_FOUND));
@@ -196,6 +288,12 @@ const remove = async (req, res, next) => {
 };
 
 
+
+
+
+
+
+
 export default {
   list,
   get,
@@ -203,6 +301,5 @@ export default {
   update,
   remove
 };
-
 
 

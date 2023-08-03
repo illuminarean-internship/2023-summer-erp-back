@@ -1,6 +1,16 @@
+
+
+
+
 /* eslint-disable func-names */
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
+
+
+
+
+
+
 
 
 const laptopSchema = new mongoose.Schema({
@@ -99,8 +109,28 @@ const laptopSchema = new mongoose.Schema({
     createAt: {
       type: Date,
       default: Date.now
-    }
+    },
+    dateAvail: {
+      type: Date,
+      required: false
+    },
+    daysLeft: {
+      type: Number,
+      default: 0,
+      required: false
+    },
   });
+
+
+  laptopSchema.pre('save', function (next) {
+    const today = new Date();
+    const diffInMilliseconds = this.dateAvail - today;
+    const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+    this.daysLeft = diffInDays;
+    next();
+  });
+
+
 
 
   laptopSchema.method({
@@ -126,14 +156,12 @@ const laptopSchema = new mongoose.Schema({
     findQuery: function (query) {
       return this.find(query).exec();
     },
-    
+   
     delete: function (_id) {
       return this.deleteOne({ _id }).exec();
     }
   };
 
-
-export default mongoose.model('laptop', laptopSchema);
 
 
 

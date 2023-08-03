@@ -6,7 +6,7 @@ export function parseToObjectList(stringList) {
       const splitedStr = stringList[index].split('\\');
       const rowId = index;
       const startDate = splitedStr[0] ? convertDateString(splitedStr[0]) : null;
-      const endDate = splitedStr[1].length > 1 ? convertDateString(splitedStr[1]) : null;
+      const endDate = splitedStr[1] ? convertDateString(splitedStr[1]) : null;
       const historyLocation = splitedStr[2] ? splitedStr[2] : null;
       const historyRemark = splitedStr[3] ? splitedStr[3] : '';
   

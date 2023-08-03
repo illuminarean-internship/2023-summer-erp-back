@@ -1,15 +1,14 @@
 
 //  "2023. 8. 2.-2023. 8. 2./Office/Remark1", -> object  
 export function parseToObjectList(stringList) {
-    const objectList = [];
-  
-    for (let index = 0; index < stringList.length; index++) {
+  const objectList = [];
+  for (let index = 0; index < stringList.length; index +=1 ) {
       const splitedStr = stringList[index].split('/');
       const rowId = index;
-      const startDate =splitedStr[0]? convertDateString(splitedStr[0]):null;
-      const endDate = splitedStr[1]? convertDateString(splitedStr[0]): null;
-      const historyLocation =splitedStr[2]? splitedStr[2]: null;
-      const historyRemark = splitedStr[3]? splitedStr[3]: "";
+      const startDate = splitedStr[0] ? convertDateString(splitedStr[0]) : null;
+      const endDate = splitedStr[1] ? convertDateString(splitedStr[1]) : null;
+      const historyLocation = splitedStr[2] ? splitedStr[2] : null;
+      const historyRemark = splitedStr[3] ? splitedStr[3] : '';
   
         const parsedObject = {
           //rowId,

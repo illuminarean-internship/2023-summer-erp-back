@@ -7,7 +7,7 @@ import itemRoute from './src/item/sample/item.route.js';
 import bookRoute from './src/item/book/book.route.js';
 import swRoute from './src/item/software/sw.route.js';
 import MockupRoute from './src/item/testdevice/mockop.route.js';
-import desktopRoute from './src/item/desktop/desktopRoute.js';
+import desktopRoute from './src/item/desktop/desktop.route.js';
 
 const router = express.Router();
 

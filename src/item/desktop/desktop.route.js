@@ -1,5 +1,5 @@
 import express from 'express';
-import desktopController from './desktopController.js';
+import desktopController from './desktop.controller.js';
 
 const router = express.Router();
 
@@ -11,8 +11,5 @@ router.route('/item/:desktopId')
   .get(desktopController.get)
   .put(desktopController.update)
   .delete(desktopController.remove);
-
-router.route('/history/:desktopId')
-  .put(desktopController.update)
 
 export default router;

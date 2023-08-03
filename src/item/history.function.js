@@ -3,7 +3,7 @@
 export function parseToObjectList(stringList) {
   const objectList = [];
   for (let index = 0; index < stringList.length; index +=1 ) {
-      const splitedStr = stringList[index].split('/');
+      const splitedStr = stringList[index].split('\\');
       const rowId = index;
       const startDate = splitedStr[0] ? convertDateString(splitedStr[0]) : null;
       const endDate = splitedStr[1].length > 1 ? convertDateString(splitedStr[1]) : null;
@@ -24,11 +24,11 @@ export function parseToObjectList(stringList) {
   }
   
  export function convertDateString(dateString) {
-    const parts = dateString.split('.').map(part => part.trim());
+    const parts = dateString.split('/');
     if(parts[1]){
-    const year = parts[0];
-    const month = parts[1].padStart(2, '0');
-    const day = parts[2].padStart(2, '0');
+    const month = parts[0];
+    const day = parts[1];
+    const year = parts[2];
   
     return `${year}-${month}-${day}`;}
     else return '';
@@ -39,9 +39,9 @@ export function parseToObjectList(stringList) {
  export function parseToStringList(objList) {
     return objList.map((obj) => {
       const { startDate, endDate, historyLocation, historyRemark } = obj;
-      const startDateString = startDate? new Date(startDate).toLocaleDateString()+'/': '/';
-      const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'/' : '/';
-      const locationString = historyLocation ? `${historyLocation}/` : '/';
+      const startDateString = startDate? new Date(startDate).toLocaleDateString()+'\\': '\\';
+      const endDateString = endDate ? new Date(endDate).toLocaleDateString()+'\\' : '\\';
+      const locationString = historyLocation ? `${historyLocation}\\` : '\\';
       const remarkString = historyRemark ? `${historyRemark}` : '';
   
       return `${startDateString}${endDateString}${locationString}${remarkString}`;

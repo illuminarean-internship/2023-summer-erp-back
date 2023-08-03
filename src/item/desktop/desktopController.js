@@ -16,7 +16,7 @@ const list = async (req, res, next) => {
     const desktops = await Desktop.findQuery(query);
     let desktopList = await Promise.all(
         desktops.map(async (item) => {
-            const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, userId, remarks, locationIsTeam, archive, createAt } = item; // Destructure the original object
+            const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, isUnreserved, isArchived, purpose, userId, remarks, locationIsTeam, archive, createAt } = item; // Destructure the original object
             const user = await User.get(userId);
         const location = user.name;
         //let team = "";
@@ -26,7 +26,7 @@ const list = async (req, res, next) => {
         let history=[];
         if(archive.length!=0){history= parseToObjectList(archive);}
         // Rearrange the keys, add the new key, and create a new object
-        return { _id, illumiSerial, purchaseDate, purchaseFrom, purpose, location, CPU, mainboard, memory, SSD, HDD, power, desktopCase, remarks, userId, history, createAt };
+        return { _id, illumiSerial, purchaseDate, purchaseFrom, isUnreserved, isArchived, purpose, location, CPU, mainboard, memory, SSD, HDD, power, desktopCase, remarks, userId, history, createAt };
       })
     );
    //if(team) desktopList = await desktopList.filter((item)=>item.team==team);
@@ -42,21 +42,22 @@ const get = async (req, res, next) => {
     const { desktopId } = req.params;
     const desktop = await Desktop.get(desktopId);
     if (desktop){ 
+
       const item = desktop;
-      const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, locationIsTeam, isUnreserved, isArchived, userId, archive, createAt } = item;      
+      const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived, archive, createAt } = item;      
       const user = await User.get(userId);
       const location = user.name;
-      let team = "";
-      if(user.teamId){
-      const teamObj = await Team.get(user.teamId);
-      team = teamObj.name;}
-      const title = name;
+      //let team = "";
+      //if(user.teamId){
+      //const teamObj = await Team.get(user.teamId);
+      //team = teamObj.name;}
+      //const title = name;
       let history=[];
       //res.json(archive);
       if(archive.length!=0){history= parseToObjectList(archive);}
       // Rearrange the keys, add the new key, and create a new object
-      const desktopInfo= { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, locationIsTeam, isUnreserved, isArchived, userId, createAt };
-      return res.json(desktopInfo);}
+      const desktopInfo= { _id, illumiSerial, location, purchaseDate, purchaseFrom, purpose, CPU, mainboard, memory, SSD, HDD, power, desktopCase, isUnreserved, isArchived, userId, history, createAt };
+      return res.json(desktopInfo); }
     const err = new APIError('No such desktop exists!', httpStatus.NOT_FOUND);
     return next(err);
   } catch (err) {
@@ -66,7 +67,7 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, location } = req.body;
+    const { illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, location, history } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
@@ -79,11 +80,11 @@ const create = async (req, res, next) => {
 
     //fill Desktopschema
     const userId = userObj._id;
-    const desktop = new Desktop({ illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose });
+    const desktop = new Desktop({ illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, userId });
     if(remarks) desktop.remarks = remarks;
     const {isUnreserved,isArchived} = checkLocation(location);
-    //if(isUnreserved) desktop.isUnreserved=true;
-    //if(isArchived) desktop.isArchived=true;
+    if(isUnreserved) desktop.isUnreserved=true;
+    if(isArchived) desktop.isArchived=true;
     if(history) desktop.archive=parseToStringList(history);
     const savedDesktop = await desktop.save();
 
@@ -99,7 +100,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { desktopId } = req.params;
-    const { name, location, purchaseDate, purchasedFrom, remarks, isarchiveged , endDate, startDate, history, locationRemarks } = req.body;
+    const { illumiSerial, location, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, remarks, isArchivedd , endDate, startDate, history, locationRemarks  } = req.body;
 
     //Hidden problem!!same user name??? => should be ID 
     //validation : desktopId is valid? & location is valid?
@@ -109,12 +110,20 @@ const update = async (req, res, next) => {
     if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
     
     //if contents changed-> just updated
-    if(name) desktop.name=name;
+    if(illumiSerial) desktop.illumiSerial=illumiSerial;
+    if(CPU) desktop.CPU=CPU;
+    if(mainboard) desktop.mainboard=mainboard;
+    if(memory) desktop.memory=memory;
+    if(SSD) desktop.SSD=SSD;
+    if(HDD) desktop.HDD=HDD;
+    if(power) desktop.power=power;
+    if(desktopCase) desktop.desktopCase=desktopCase;
+
     if(purchaseDate) desktop.purchaseDate= purchaseDate; 
-    if(purchasedFrom) desktop.purchasedFrom =purchasedFrom;
+    if(purchaseFrom) desktop.purchaseFrom =purchaseFrom;
     if(remarks) desktop.remarks=remarks;
 
-    //if location changed-> update user schema and archiveg
+    //if location changed-> update user schema and archive
     if(location&&!validation._id.equals(desktop.userId)){
       // update user schema
       const {isUnreserved,isArchived} = checkLocation(location);
@@ -132,7 +141,7 @@ const update = async (req, res, next) => {
       desktop.userId=new_userObj._id;
 
       //archive
-      if(isarchiveged){
+      if(isArchivedd){
         if(desktop.archive.length==0){
             desktop.archive.push(desktop.purchaseDate.toLocaleDateString()+'/');
         }

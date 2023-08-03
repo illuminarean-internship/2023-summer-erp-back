@@ -57,10 +57,18 @@ const DesktopSchema= new mongoose.Schema({
       required: false
     },
     //Additional info
-    locationIsTeam:{
+    /*locationIsTeam:{
       type: Boolean,
       default: false,
       required: false
+    },*/
+    isUnreserved:{
+      type: Boolean,
+      default: false
+    },
+    isArchived:{
+      type: Boolean,
+      default: false
     },
     archive:{
       type: [String],

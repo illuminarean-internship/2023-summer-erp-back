@@ -7,6 +7,7 @@ import itemRoute from './src/item/sample/item.route.js';
 import bookRoute from './src/item/book/book.route.js';
 import swRoute from './src/item/software/sw.route.js';
 import MockupRoute from './src/item/testdevice/mockop.route.js';
+import AccRoute from './src/item/accessory/acc.route.js';
 
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.use('/projs', projRoute);
 router.use('/books', bookRoute);
 router.use('/software', swRoute);
 router.use('/test-device', MockupRoute);
+router.use('/accessory', AccRoute);
 
 export default router;

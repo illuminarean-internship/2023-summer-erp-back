@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 
 const DesktopSchema= new mongoose.Schema({
-    illumi_Serial:{
+    illumiSerial:{
       type: String,
       required: true
     },
@@ -11,11 +11,11 @@ const DesktopSchema= new mongoose.Schema({
       type: String,
       required: false
     },
-    Mainboard: {
+    mainboard: {
       type: String,
       required: false
     },
-     Memory:{
+    memory:{
       type: String,
       required: false
     },
@@ -31,15 +31,15 @@ const DesktopSchema= new mongoose.Schema({
       type: String,
       required: false
     },
-    case:{
+     desktopCase:{
       type: String,
       required: false
     },  
-    Purchase_date: {
+    purchaseDate: {
       type: Date,
       required: true
     },
-    Purchase_from: {
+    purchaseFrom: {
       type :String,
       required :true
     }, 
@@ -47,22 +47,30 @@ const DesktopSchema= new mongoose.Schema({
       type :String,
       required :true
     },
-    Location:{
+    userId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
     }, 
-     Remarks:{
+    remarks:{
       type: String,
       required: false
     },
     //Additional info
-    location_is_team:{
+    /*locationIsTeam:{
       type: Boolean,
       default: false,
       required: false
+    },*/
+    isUnreserved:{
+      type: Boolean,
+      default: false
     },
-    Archive:{
+    isArchived:{
+      type: Boolean,
+      default: false
+    },
+    archive:{
       type: [String],
       required:false
     },
@@ -72,4 +80,36 @@ const DesktopSchema= new mongoose.Schema({
     }
   });
 
+  DesktopSchema.method({
+  });
+  
+  DesktopSchema.statics = {
+    list: function () {
+      return this.find({})
+        .sort({ createdAt: -1 })
+       // .skip(+skip)
+       // .limit(+limit)
+        .exec();
+    },
+  
+    get: function (id) {
+      return this.findById(id).exec();
+    },
+  
+    findQuery: function(query){
+      return this.find(query).exec();
+    },
+  /*
+    updateContents: function (_id, name, purchaseDate, price, remarks ) {
+      return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
+    },
+  
+    updateLocation: function (_id, teamName, location, userId ) {
+      return this.updateOne({ _id }, {  $set: { teamName: teamName, location: location, userId: userId}}).exec();
+    },
+  */
+    delete: function (_id) {
+      return this.deleteOne({ _id }).exec();
+    }
+  };
 export default mongoose.model('Desktop', DesktopSchema);

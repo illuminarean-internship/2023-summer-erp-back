@@ -7,12 +7,12 @@ const TeamSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  connectingId : { 
+  connectingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:'User',
+    ref: 'User',
     required: false
   },
-  numOfMembers :{
+  numOfMembers: {
     type: Number,
     default: 0
   }
@@ -40,8 +40,8 @@ TeamSchema.statics = {
     return this.findById(_id).exec();
   },
 
-  getbyName: function (name) {
-    return this.findOne({name:name}).exec();
+  getByName: function (name) {
+    return this.findOne({ name: name }).exec();
   },
 
   update: function (_id, name) {

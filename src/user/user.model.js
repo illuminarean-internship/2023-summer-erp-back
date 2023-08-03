@@ -13,19 +13,19 @@ const UserSchema = new mongoose.Schema({
     required: false,
   },
   projectIdList: {
-    type : [mongoose.Schema.Types.ObjectId],
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'Project',
-    default:[]
+    default: []
   },
   field: {
-    type : String, 
+    type: String,
     required: false,
-    default:""
+    default: ''
   },
   numOfAssets: {
-    type:Number,
+    type: Number,
     default: 0,
-    required:true
+    required: true
   },
   createdAt: {
     type: Date,
@@ -47,8 +47,8 @@ UserSchema.statics = {
   list: function () {
     return this.find()
       .sort({ createdAt: -1 })
-     // .skip(+skip)
-     // .limit(+limit)
+    // .skip(+skip)
+    // .limit(+limit)
       .exec();
   },
 
@@ -57,7 +57,7 @@ UserSchema.statics = {
   },
 
   getByName: function (name) {
-    return this.findOne({name:name}).exec();
+    return this.findOne({ name: name }).exec();
   },
 
   rename: function (_id, name) {

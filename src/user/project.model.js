@@ -7,7 +7,7 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  numOfMembers :{
+  numOfMembers: {
     type: Number,
     default: 0
   }
@@ -35,11 +35,9 @@ ProjectSchema.statics = {
     return this.findById(_id).exec();
   },
 
-  getbyName: function (name) {
-    return this.findOne({name:name}).exec();
+  getByName: function (name) {
+    return this.findOne({ name: name }).exec();
   },
-
-
   update: function (_id, name) {
     return this.updateOne({ _id }, { name }).exec();
   },

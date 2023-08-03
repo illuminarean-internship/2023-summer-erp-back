@@ -17,7 +17,7 @@ const list = async (req, res, next) => {
     }
 
     const sws = await SW.findQuery(query);
-    let swList = await Promise.all(
+    const swList = await Promise.all(
       sws.map(async (item) => {
         const {
           _id, name, purchaseDate, unitPrice, quantity, totalPrice,
@@ -32,7 +32,7 @@ const list = async (req, res, next) => {
         };
       })
     );
-   res.json(swList);
+    res.json(swList);
   } catch (err) {
     next(err);
   }

@@ -1,5 +1,5 @@
 import express from 'express';
-import desktopController from './desktop.controller.js';
+import desktopController from './desktopController.js';
 
 const router = express.Router();
 

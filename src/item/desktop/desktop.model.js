@@ -47,7 +47,7 @@ const DesktopSchema= new mongoose.Schema({
       type :String,
       required :true
     },
-    location:{
+    userId:{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false 
@@ -72,4 +72,36 @@ const DesktopSchema= new mongoose.Schema({
     }
   });
 
+  DesktopSchema.method({
+  });
+  
+  DesktopSchema.statics = {
+    list: function () {
+      return this.find({})
+        .sort({ createdAt: -1 })
+       // .skip(+skip)
+       // .limit(+limit)
+        .exec();
+    },
+  
+    get: function (id) {
+      return this.findById(id).exec();
+    },
+  
+    findQuery: function(query){
+      return this.find(query).exec();
+    },
+  /*
+    updateContents: function (_id, name, purchaseDate, price, remarks ) {
+      return this.updateOne({ _id }, { $set: { name: name, purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
+    },
+  
+    updateLocation: function (_id, teamName, location, userId ) {
+      return this.updateOne({ _id }, {  $set: { teamName: teamName, location: location, userId: userId}}).exec();
+    },
+  */
+    delete: function (_id) {
+      return this.deleteOne({ _id }).exec();
+    }
+  };
 export default mongoose.model('Desktop', DesktopSchema);

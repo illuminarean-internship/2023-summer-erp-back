@@ -123,8 +123,7 @@ const update = async (req, res, next) => {
     if (price) book.price = price;
 
     // if location changed-> update user schema and logg
-    if (location && !validation._id.equals(book.userId))
-    {
+    if (location && !validation._id.equals(book.userId)) {
       // update user schema
       const { isUnreserved, isArchived } = checkLocation(location);
       book.isUnreserved = isUnreserved;

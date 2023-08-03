@@ -7,14 +7,25 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  teamName: {
-    type : String, 
-    required: true
+  teamId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    required: false,
+  },
+  projectIdList: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Project',
+    default: []
+  },
+  field: {
+    type: String,
+    required: false,
+    default: ''
   },
   numOfAssets: {
-    type:Number,
+    type: Number,
     default: 0,
-    required:true
+    required: true
   },
   createdAt: {
     type: Date,
@@ -33,11 +44,11 @@ UserSchema.method({
 });
 
 UserSchema.statics = {
-  list: function ({ skip = 0, limit = 50 } = {}) {
-    return this.find({})
+  list: function () {
+    return this.find()
       .sort({ createdAt: -1 })
-      .skip(+skip)
-      .limit(+limit)
+    // .skip(+skip)
+    // .limit(+limit)
       .exec();
   },
 
@@ -45,8 +56,16 @@ UserSchema.statics = {
     return this.findById(id).exec();
   },
 
-  update: function (_id, name, teamName) {
-    return this.updateOne({ _id }, { name, teamName }).exec();
+  getByName: function (name) {
+    return this.findOne({ name: name }).exec();
+  },
+
+  rename: function (_id, name) {
+    return this.updateOne({ _id }, { $set: { name: name} }).exec();
+  },
+
+  update: function (_id, name, teamId) {
+    return this.updateOne({ _id }, { name, teamId }).exec();
   },
 
   delete: function (_id) {

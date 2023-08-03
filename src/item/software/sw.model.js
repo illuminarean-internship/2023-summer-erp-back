@@ -2,7 +2,7 @@
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-const BookSchema = new mongoose.Schema({
+const SwSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -11,15 +11,20 @@ const BookSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  purchasedFrom: {
-    type: String,
-    required: true
-  },
-  price: {
+  unitPrice: {
     type: Number,
     required: true
   },
-  remarks: {
+  amount: {
+    type: Number,
+    required: true,
+    default: 1
+  },
+  currency: {
+    type: String,
+    required: false,
+  },
+  reference: {
     type: String,
     required: false,
     default: ''
@@ -49,10 +54,10 @@ const BookSchema = new mongoose.Schema({
   }
 });
 
-BookSchema.method({
+SwSchema.method({
 });
 
-BookSchema.statics = {
+SwSchema.statics = {
   list: function () {
     return this.find({})
       .sort({ createdAt: -1 })
@@ -69,14 +74,9 @@ BookSchema.statics = {
     return this.find(query).exec();
   },
   /*
-  updateContents: function (_id, name, purchaseDate, price, remarks ) {
-  return this.updateOne({ _id }, { $set: { name: name, 
-    purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
-  },
-
-  updateLocation: function (_id, teamName, location, userId ) {
-  return this.updateOne({ _id }, {  $set: { teamName: teamName, 
-    location: location, userId: userId}}).exec();
+  update: function (_id, name, purchaseDate, price, remarks ) {
+    return this.updateOne({ _id }, { $set: { name: name,
+       purchaseDate: purchaseDate, price:price, remarks:remarks}}).exec();
   },
   */
   delete: function (_id) {
@@ -84,4 +84,4 @@ BookSchema.statics = {
   }
 };
 
-export default mongoose.model('Book', BookSchema);
+export default mongoose.model('SW', SwSchema);

@@ -10,7 +10,7 @@ router.route('/')
   //.post(validate(reqValidation.createUser), userController.create);
   .post(userController.create);
 
-router.route('/:userId')
+router.route('/user/:userId')
   .get(userController.get)
   .put(userController.update)
   .delete(userController.remove);

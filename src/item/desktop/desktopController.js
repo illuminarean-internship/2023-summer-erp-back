@@ -13,6 +13,7 @@ const list = async (req, res, next) => {
     if(title){delete query.title; query.name=title;}
     if(team){delete query.team;}
     if(location){delete query.location;}
+
     const desktops = await Desktop.findQuery(query);
     let desktopList = await Promise.all(
         desktops.map(async (item) => {
@@ -20,7 +21,7 @@ const list = async (req, res, next) => {
             const user = await User.get(userId);
         const location = user.name;
         let team = "";
-        if(user.teamId){
+        if(user.teamId){  
         const teamObj = await Team.get(user.teamId);
         team = teamObj.name;}
         let history=[];
@@ -43,7 +44,8 @@ const get = async (req, res, next) => {
     const desktop = await Desktop.get(desktopId);
     if (desktop){ 
       const item = desktop;
-      const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, locationIsTeam, isUnreserved, isArchived, userId, log, createAt } = item;      const user = await User.get(userId);
+      const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, locationIsTeam, isUnreserved, isArchived, userId, log, createAt } = item;      
+      const user = await User.get(userId);
       const location = user.name;
       let team = "";
       if(user.teamId){
@@ -65,7 +67,7 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { title, location, purchaseDate, purchasedFrom, remarks, history } = req.body;
+    const { _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase, purchaseDate, purchaseFrom, purpose, remarks, history } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing

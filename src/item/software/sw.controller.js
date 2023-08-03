@@ -8,8 +8,7 @@ import { checkLocation } from '../sub.function.js';
 const list = async (req, res, next) => {
   try {
     const query = req.query;
-    const { totalPrice, user } = req.query;
-    if (totalPrice) { delete query.totalPrice; }
+    const { user } = req.query;
     if (user) {
       delete query.user;
       const userObj = await User.getByName(user);
@@ -21,21 +20,19 @@ const list = async (req, res, next) => {
     let swList = await Promise.all(
       sws.map(async (item) => {
         const {
-          _id, name, purchaseDate, unitPrice, amount,
+          _id, name, purchaseDate, unitPrice, quantity, totalPrice,
           reference, currency, isUnreserved, isArchived, userId, log, createAt
         } = item; // Destructure the original object
         const user = await User.get(userId).name;
-        const totalPrice = unitPrice * amount;
         const history = log.length !== 0 ? parseToObjectList(log) : [];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, name, purchaseDate, unitPrice, amount,
+          _id, name, purchaseDate, unitPrice, quantity,
           totalPrice, currency, reference, user, isUnreserved, isArchived, userId, history, createAt
         };
       })
     );
-    if (totalPrice) swList = swList.filter((item) => item.totalPrice === parseInt(totalPrice, 10));
-    res.json(swList);
+   res.json(swList);
   } catch (err) {
     next(err);
   }
@@ -47,15 +44,15 @@ const get = async (req, res, next) => {
     const sw = await SW.get(swId);
     if (!sw) { const err = new APIError('No such sw exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, name, purchaseDate, unitPrice, amount, reference,
+      _id, name, purchaseDate, unitPrice, quantity, reference, totalPrice,
       currency, isUnreserved, isArchived, userId, log, createAt
     } = sw; // Destructure the original object
     const user = await User.get(userId).name;
     const history = log.length !== 0 ? parseToObjectList(log) : [];
-    const totalPrice = amount * unitPrice;
+    // const totalPrice = quantity * unitPrice;
     // Rearrange the keys, add the new key, and create a new object
     const swInfo = {
-      _id, name, purchaseDate, unitPrice, amount, totalPrice, currency, reference,
+      _id, name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference,
       user, isUnreserved, isArchived, userId, history, createAt
     };
     return res.json(swInfo);
@@ -68,7 +65,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      name, purchaseDate, unitPrice, amount, currency, reference, user, history
+      name, purchaseDate, unitPrice, quantity, currency, reference, user, history, totalPrice
     } = req.body;
 
     // find the team is existing
@@ -82,7 +79,7 @@ const create = async (req, res, next) => {
     // fill swschema
     const userId = userObj._id;
     const sw = new SW({
-      name, purchaseDate, unitPrice, amount, currency, reference, userId
+      name, purchaseDate, unitPrice, totalPrice, quantity, currency, reference, userId
     });
     const { isUnreserved, isArchived } = checkLocation(user);
     sw.isUnreserved = isUnreserved;
@@ -103,7 +100,7 @@ const update = async (req, res, next) => {
   try {
     const { swId } = req.params;
     const {
-      name, purchaseDate, unitPrice, amount, currency, reference, user, history,
+      name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference, user, history,
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -118,7 +115,8 @@ const update = async (req, res, next) => {
     if (name) sw.name = name;
     if (purchaseDate) sw.purchaseDate = purchaseDate;
     if (unitPrice) sw.unitPrice = unitPrice;
-    if (amount) sw.amount = amount;
+    if (quantity) sw.quantity = quantity;
+    if (totalPrice) sw.totalPrice = totalPrice;
     if (reference) sw.remarks = reference;
     if (currency) sw.currency = currency;
 

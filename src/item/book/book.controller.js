@@ -22,7 +22,7 @@ const list = async (req, res, next) => {
         } = item;
         const user = await User.get(userId);
         const location = user.name;
-        const team = user.teamId ? await Team.get(user.teamId).name : '';
+        const team = user.teamId ? (await Team.get(user.teamId)).name : '';
         const title = name;
         const history = log.length !== 0 ? parseToObjectList(log) : [];
         // Rearrange the keys, add the new key, and create a new object
@@ -51,7 +51,7 @@ const get = async (req, res, next) => {
     } = book; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
-    const team = user.teamId ? await Team.get(user.teamId).name : '';
+    const team = user.teamId ? (await Team.get(user.teamId)).name : '';
     const title = name;
     const history = log.length !== 0 ? parseToObjectList(log) : [];
     // Rearrange the keys, add the new key, and create a new object

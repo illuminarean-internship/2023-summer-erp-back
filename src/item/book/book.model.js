@@ -19,10 +19,10 @@ const BookSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  remarks: {
+  currency: {
     type: String,
     required: false,
-    default: ''
+    default: '￦'
   },
   // Additional info,
   isUnreserved: {

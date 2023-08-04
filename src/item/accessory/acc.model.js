@@ -2,10 +2,38 @@
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-const BookSchema = new mongoose.Schema({
-  name: {
+const AccSchema = new mongoose.Schema({
+  model: {
     type: String,
     required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  illuSerialNumber: {
+    type: String,
+    required: false
+  },
+  serialNumber: {
+    type: String,
+    required: false
+  },
+  color: {
+    type: String,
+    required: false
+  },
+  price: {
+    type: Number,
+    required: false
+  },
+  surtax: {
+    type: Number,
+    required: false
+  },
+  totalPrice: {
+    type: Number,
+    required: false
   },
   purchaseDate: {
     type: Date,
@@ -13,16 +41,7 @@ const BookSchema = new mongoose.Schema({
   },
   purchasedFrom: {
     type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  currency: {
-    type: String,
-    required: false,
-    default: '￦'
+    required: false
   },
   // Additional info,
   isUnreserved: {
@@ -49,10 +68,10 @@ const BookSchema = new mongoose.Schema({
   }
 });
 
-BookSchema.method({
+AccSchema.method({
 });
 
-BookSchema.statics = {
+AccSchema.statics = {
   list: function () {
     return this.find({})
       .sort({ createdAt: -1 })
@@ -84,4 +103,4 @@ BookSchema.statics = {
   }
 };
 
-export default mongoose.model('Book', BookSchema);
+export default mongoose.model('Acc', AccSchema);

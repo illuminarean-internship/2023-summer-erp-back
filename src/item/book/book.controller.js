@@ -17,7 +17,7 @@ const list = async (req, res, next) => {
     let bookList = await Promise.all(
       books.map(async (item) => {
         const {
-          _id, name, purchaseDate, purchasedFrom, price,
+          _id, name, purchaseDate, purchasedFrom, price, currency,
           isUnreserved, isArchived, userId, log, createAt
         } = item;
         const user = await User.get(userId);
@@ -27,7 +27,7 @@ const list = async (req, res, next) => {
         const history = log.length !== 0 ? parseToObjectList(log) : [];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, title, team, location, purchaseDate, purchasedFrom, price,
+          _id, title, team, location, purchaseDate, purchasedFrom, price, currency,
           isUnreserved, isArchived, userId, history, createAt
         };
       })
@@ -56,7 +56,7 @@ const get = async (req, res, next) => {
     const history = log.length !== 0 ? parseToObjectList(log) : [];
     // Rearrange the keys, add the new key, and create a new object
     const bookInfo = {
-      _id, title, team, location, purchaseDate, purchasedFrom, price,
+      _id, title, team, location, purchaseDate, purchasedFrom, price, currency,
       isUnreserved, isArchived, userId, history, createAt
     };
     return res.json(bookInfo);
@@ -69,7 +69,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      title, location, purchaseDate, purchasedFrom, price, history
+      title, location, purchaseDate, purchasedFrom, price, history, currency
     } = req.body;
 
     // find the team is existing
@@ -84,7 +84,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const name = title;
     const book = new Book({
-      name, purchaseDate, purchasedFrom, price, userId
+      name, purchaseDate, purchasedFrom, price, userId, currency
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     book.isUnreserved = isUnreserved;
@@ -105,7 +105,7 @@ const update = async (req, res, next) => {
   try {
     const { bookId } = req.params;
     const {
-      title, location, purchaseDate, purchasedFrom, price, history
+      title, location, purchaseDate, purchasedFrom, price, history, currency
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -121,6 +121,7 @@ const update = async (req, res, next) => {
     if (purchaseDate) book.purchaseDate = purchaseDate;
     if (purchasedFrom) book.purchasedFrom = purchasedFrom;
     if (price) book.price = price;
+    if (currency) book.currency = currency;
 
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(book.userId)) {

@@ -23,6 +23,6 @@ router.use('/projs', projRoute);
 router.use('/books', bookRoute);
 router.use('/software', swRoute);
 router.use('/test-device', MockupRoute);
-router.use('/laptops', laptopRoute);
+router.use('/laptop', laptopRoute);
 
 export default router;

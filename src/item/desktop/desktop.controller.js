@@ -64,7 +64,7 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase,
-      purchaseDate, purchasedFrom, purpose, remarks, location, history
+      purchaseDate, purchasedFrom, purpose, location, history
     } = req.body;
 
     // find the team is existing

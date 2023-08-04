@@ -39,7 +39,7 @@ const DesktopSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  purchaseFrom: {
+  purchasedFrom: {
     type: String,
     required: true
   },

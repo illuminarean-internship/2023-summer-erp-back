@@ -157,7 +157,7 @@ const remove = async (req, res, next) => {
     const userObj = await User.get(desktop.userId);
     userObj.numOfAssets -= 1;
     await userObj.save();
-    const result = await desktop.delete(desktopId);
+    const result = await Desktop.delete(desktopId);
     return res.json(result);
   } catch (err) {
     return next(err);

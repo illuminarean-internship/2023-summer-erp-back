@@ -1,7 +1,6 @@
 import httpStatus from 'http-status';
 import APIError from '../../helpers/apiErrorHelper.js';
 import User from '../../user/user.model.js';
-import Team from '../../user/team.model.js';
 import Acc from './acc.model.js';
 import { parseToObjectList, parseToStringList } from '../history.function.js';
 import { checkLocation } from '../sub.function.js';
@@ -158,7 +157,7 @@ const remove = async (req, res, next) => {
     const userObj = await User.get(acc.userId);
     userObj.numOfAssets -= 1;
     await userObj.save();
-    const result = await acc.delete(accId);
+    const result = await Acc.delete(accId);
     return res.json(result);
   } catch (err) {
     return next(err);

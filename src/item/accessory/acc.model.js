@@ -12,7 +12,7 @@ const AccSchema = new mongoose.Schema({
     required: true
   },
   illuSerialNumber: {
-    type: Number,
+    type: String,
     required: false
   },
   serialNumber: {

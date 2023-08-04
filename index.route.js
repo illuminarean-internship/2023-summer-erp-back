@@ -8,7 +8,10 @@ import bookRoute from './src/item/book/book.route.js';
 import swRoute from './src/item/software/sw.route.js';
 import MockupRoute from './src/item/testdevice/mockop.route.js';
 import laptopRoute from './src/item/laptop/laptopRoute.js';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
 
 const router = express.Router();
 

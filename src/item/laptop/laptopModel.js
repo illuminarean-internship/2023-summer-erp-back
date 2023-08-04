@@ -119,6 +119,7 @@ const laptopSchema = new mongoose.Schema({
       default: 0,
       required: false
     },
+<<<<<<< HEAD
   });
 
 
@@ -128,9 +129,17 @@ const laptopSchema = new mongoose.Schema({
     const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
     this.daysLeft = diffInDays;
     next();
+=======
+>>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
   });
 
-
+  laptopSchema.pre('save', function (next) {
+    const today = new Date();
+    const diffInMilliseconds = this.dateAvail - today;
+    const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+    this.daysLeft = diffInDays;
+    next();
+  });
 
 
   laptopSchema.method({

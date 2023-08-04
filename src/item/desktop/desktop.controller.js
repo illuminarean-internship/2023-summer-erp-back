@@ -14,9 +14,8 @@ const list = async (req, res, next) => {
     let desktopList = await Promise.all(
       desktops.map(async (item) => {
         const {
-          _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase,
-          purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose, userId,
-          log, createAt
+          _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
+          details, userId, log, createAt, totalPrice
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -24,7 +23,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-          location, CPU, mainboard, memory, SSD, HDD, power, desktopCase, userId, history, createAt
+          location, details, userId, history, createAt, totalPrice
         };
       })
     );
@@ -41,17 +40,16 @@ const get = async (req, res, next) => {
     const desktop = await Desktop.get(desktopId);
     if (!desktop) { const err = new APIError('No such desktop exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, illumiSerial, CPU, mainboard, memory, SSD, HDD, power,
-      desktopCase, purchaseDate, purchasedFrom, purpose, userId,
-      isUnreserved, isArchived, log, createAt 
+      _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
+      details, userId, log, createAt, totalPrice
     } = desktop; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
     const history = log.length !== 0 ? parseToObjectList(log) : [];
     // Rearrange the keys, add the new key, and create a new object
     const desktopInfo = {
-      _id, illumiSerial, location, purchaseDate, purchasedFrom, purpose, CPU, mainboard, memory, SSD, HDD,
-      power, desktopCase, isUnreserved, isArchived, userId, history, createAt
+      _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
+      location, details, userId, history, createAt, totalPrice
     };
     return res.json(desktopInfo);
   } catch (err) {
@@ -63,8 +61,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      illumiSerial, CPU, mainboard, memory, SSD, HDD, power, desktopCase,
-      purchaseDate, purchasedFrom, purpose, remarks, location, history
+      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history
     } = req.body;
 
     // find the team is existing
@@ -74,12 +71,14 @@ const create = async (req, res, next) => {
       // if not, return error
       return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
     }
-
+    let totalPrice = 0;
+    for (const detail of details) {
+      totalPrice += parseFloat(detail.price);
+    }
     // fill desktopschema
     const userId = userObj._id;
     const desktop = new Desktop({
-      illumiSerial, CPU, mainboard, memory, SSD, HDD, power,
-      desktopCase, purchaseDate, purchasedFrom, purpose, userId
+      illumiSerial, purchaseDate, purchasedFrom, purpose, details, userId, totalPrice
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     desktop.isUnreserved = isUnreserved;
@@ -100,8 +99,7 @@ const update = async (req, res, next) => {
   try {
     const { desktopId } = req.params;
     const {
-      illumiSerial, location, CPU, mainboard, memory, SSD, HDD, power, desktopCase,
-      purchaseDate, purchasedFrom, history
+      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -114,13 +112,15 @@ const update = async (req, res, next) => {
 
     // if contents changed-> just updated
     if (illumiSerial) desktop.illumiSerial = illumiSerial;
-    if (CPU) desktop.CPU = CPU;
-    if (mainboard) desktop.mainboard = mainboard;
-    if (memory) desktop.memory = memory;
-    if (SSD) desktop.SSD = SSD;
-    if (HDD) desktop.HDD = HDD;
-    if (power) desktop.power = power;
-    if (desktopCase) desktop.desktopCase = desktopCase;
+    if (purpose) desktop.purpose = purpose;
+    if (details) {
+      desktop.details = details;
+      let totalPrice = 0;
+      for (const detail of details) {
+        totalPrice += parseFloat(detail.price);
+      }
+      desktop.totalPrice = totalPrice
+    }
     if (purchaseDate) desktop.purchasedDate = purchaseDate; 
     if (purchasedFrom) desktop.purchaseFrom = purchasedFrom;
 
@@ -157,7 +157,7 @@ const remove = async (req, res, next) => {
     const userObj = await User.get(desktop.userId);
     userObj.numOfAssets -= 1;
     await userObj.save();
-    const result = await desktop.delete(desktopId);
+    const result = await Desktop.delete(desktopId);
     return res.json(result);
   } catch (err) {
     return next(err);

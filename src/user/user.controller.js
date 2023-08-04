@@ -12,7 +12,7 @@ const list = async (req, res, next) => {
     const userlist = await Promise.all(
       users.map(async (item) => {
         const {
-          _id, name, teamId, projectIdList, field, numOfAssets, createAt
+          _id, name, teamId, projectIdList, field, numOfAssets, remarks, createAt
         } = item; // Destructure the original object
         // team data
         const team = teamId ? (await Team.get(teamId)).name : '';
@@ -26,7 +26,7 @@ const list = async (req, res, next) => {
           })
         );
         return {
-          _id, name, team, teamId, project, field, numOfAssets, createAt
+          _id, name, team, teamId, project, field, numOfAssets, remarks, createAt
         };
       })
     );
@@ -40,9 +40,27 @@ const get = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await User.get(userId);
-    if (user) return res.json(user);
-    const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
-    return next(err);
+    if (!user) {
+      const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+      return next(err);
+    }
+    const {
+      _id, name, teamId, projectIdList, field, numOfAssets, remarks, createAt
+    } = user; // Destructure the original object
+    const team = teamId ? (await Team.get(teamId)).name : '';
+    // project data
+    // let projectStr = '';
+    const project = await Promise.all(
+      projectIdList.map(async (projectId) => {
+        const projectObj = await Project.get(projectId);
+        // projectStr = project_str+project.name+"\n";
+        return projectObj.name;
+      })
+    );
+    const userInfo = {
+      _id, name, team, teamId, project, field, numOfAssets, remarks, createAt
+    };
+    res.json(userInfo);
   } catch (err) {
     return next(err);
   }
@@ -52,7 +70,7 @@ const create = async (req, res, next) => {
   try {
     // validation -> if can, change it to as Id
     const {
-      name, team, project, field
+      name, team, project, field, remarks
     } = req.body;
     if (!name || !team) return next(new APIError('U should fill name and team', httpStatus.NOT_ACCEPTABLE));
 
@@ -73,7 +91,7 @@ const create = async (req, res, next) => {
     }));
     // add user
     const user = new User({
-      name, teamId: teamObj._id, projectIdList, field
+      name, teamId: teamObj._id, projectIdList, field, remarks
     });
     const savedUser = await user.save();
     // project side update
@@ -96,7 +114,7 @@ const update = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const {
-      name, team, project, field
+      name, team, project, field, remarks
     } = req.body;
 
     // validation : userId is valid? & team name is valid & project name is valid?
@@ -116,6 +134,7 @@ const update = async (req, res, next) => {
 
     if (name) user.name = name;
     if (field) user.field = field;
+    if (remarks) user.remarks = remarks;
     if (team && teamNewObj._id !== user.teamId) {
       const teamObj = await Team.get(user.teamId);
       teamObj.numOfMembers -= 1;

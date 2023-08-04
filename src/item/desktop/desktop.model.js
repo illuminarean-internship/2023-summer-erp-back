@@ -7,34 +7,6 @@ const DesktopSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  CPU: {
-    type: String,
-    required: false
-  },
-  mainboard: {
-    type: String,
-    required: false
-  },
-  memory: {
-    type: String,
-    required: false
-  },
-  SSD: {
-    type: String,
-    required: false
-  },
-  HDD: {
-    type: String,
-    required: false
-  },
-  power: {
-    type: String,
-    required: false
-  },
-  desktopCase: {
-    type: String,
-    required: false
-  },
   purchaseDate: {
     type: Date,
     required: true
@@ -47,13 +19,16 @@ const DesktopSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  details: {
+    type: Array,
+    default: []
+  },
+  totalPrice: {
+    type: Number
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: false
-  },
-  remarks: {
-    type: String,
     required: false
   },
   isUnreserved: {

@@ -6,28 +6,13 @@ import Laptop from './laptopModel.js';
 import { parseToObjectList , parseToStringList } from '../history.function.js';
 import {checkLocation} from "../sub.function.js"
 
-
-
-
-
-
-
-
 const list = async (req, res, next) => {
   try {
     const query = req.query;
     const { location } = req.query;
     //if(team){delete query.team;}
     if(location){delete query.location;}
-
-
-
-
-
-
-
-
-    const laptops = await Laptop.findQuery(query);
+ laptops = await Laptop.findQuery(query);
     let laptopList = await Promise.all(
         laptops.map(async (item) => {
           const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
@@ -55,26 +40,11 @@ const list = async (req, res, next) => {
   }
 };
 
-
-
-
-
-
-
-
 const get = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const laptop = await Laptop.get(laptopId);
     if (laptop){
-
-
-
-
-
-
-
-
       const item = laptop;
       const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
@@ -101,26 +71,12 @@ const get = async (req, res, next) => {
   }
 };
 
-
-
-
-
-
-
-
 const create = async (req, res, next) => {
   try {
     const { category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
     illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history,
     dateAvail, daysLeft } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
-
-
-
-
-
-
-
 
     //find the team is existing
     const userObj = await User.getByName(location);
@@ -129,13 +85,6 @@ const create = async (req, res, next) => {
       //if not, return erro
       return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
     }
-
-
-
-
-
-
-
 
     //fill Laptopschema
     const userId = userObj._id;
@@ -149,13 +98,6 @@ const create = async (req, res, next) => {
     if(history) laptop.archive=parseToStringList(history);
     const savedLaptop = await laptop.save();
 
-
-
-
-
-
-
-
     //update item list of user
     userObj.numOfAssets=userObj.numOfAssets+1;
     await userObj.save();
@@ -164,12 +106,6 @@ const create = async (req, res, next) => {
     return next(err);
   }
 };
-
-
-
-
-
-
 
 
 const update = async (req, res, next) => {
@@ -225,13 +161,6 @@ const update = async (req, res, next) => {
       if(isArchived) laptop.isArchived=true;
       if(isRepair) laptop.isArchived=true;
 
-
-
-
-
-
-
-
       const userObj = await User.get(laptop.userId);
       userObj.numOfAssets= userObj.numOfAssets-1;
       await userObj.save();
@@ -240,21 +169,7 @@ const update = async (req, res, next) => {
       new_userObj.numOfAssets = userObj.numOfAssets+1;
       await new_userObj.save();
 
-
-
-
-
-
-
-
       laptop.userId=new_userObj._id;
-
-
-
-
-
-
-
 
     }
     if (history) { laptop.archive = parseToStringList(history); }
@@ -264,13 +179,6 @@ const update = async (req, res, next) => {
     return next(err);
   }
 };
-
-
-
-
-
-
-
 
 const remove = async (req, res, next) => {
   try {
@@ -286,13 +194,6 @@ const remove = async (req, res, next) => {
     return next(err);
   }
 };
-
-
-
-
-
-
-
 
 export default {
   list,

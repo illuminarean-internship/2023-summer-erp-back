@@ -18,5 +18,3 @@ router.route('/item/:laptopId')
 
 export default router;
 
-
-

@@ -16,6 +16,9 @@ import laptopRoute from './src/item/laptop/laptopRoute.js';
 import AccRoute from './src/item/accessory/acc.route.js';
 import desktopRoute from './src/item/desktop/desktop.route.js';
 >>>>>>> ad4379d29300f6350346bd83d35c0fa1f630c99f
+import laptopRoute from './src/item/laptop/laptopRoute.js';
+import AccRoute from './src/item/accessory/acc.route.js';
+import desktopRoute from './src/item/desktop/desktop.route.js';
 
 const router = express.Router();
 
@@ -32,6 +35,7 @@ router.use('/test-device', MockupRoute);
 <<<<<<< HEAD
 router.use('/laptop', laptopRoute);
 =======
+router.use('/laptop', laptopRoute);
 router.use('/accessory', AccRoute);
 router.use('/desktop-pc', desktopRoute);
 >>>>>>> ad4379d29300f6350346bd83d35c0fa1f630c99f

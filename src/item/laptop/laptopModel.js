@@ -1,17 +1,6 @@
-
-
-
-
 /* eslint-disable func-names */
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
-
-
-
-
-
-
-
 
 const laptopSchema = new mongoose.Schema({
     /*deviceImage:{
@@ -163,5 +152,4 @@ const laptopSchema = new mongoose.Schema({
   };
 
 
-
-
+export default mongoose.model('laptop', laptopSchema);

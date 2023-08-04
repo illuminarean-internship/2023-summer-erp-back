@@ -1,24 +1,7 @@
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> 113c241cc680869b7405af27e78c1917ce70fcaa
 /* eslint-disable func-names */
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-
-
-
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> 113c241cc680869b7405af27e78c1917ce70fcaa
 const laptopSchema = new mongoose.Schema({
     /*deviceImage:{
       type: String,
@@ -125,21 +108,6 @@ const laptopSchema = new mongoose.Schema({
       default: 0,
       required: false
     },
-<<<<<<< HEAD
-<<<<<<< HEAD
-  });
-
-
-  laptopSchema.pre('save', function (next) {
-    const today = new Date();
-    const diffInMilliseconds = this.dateAvail - today;
-    const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
-    this.daysLeft = diffInDays;
-    next();
-=======
->>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
-=======
->>>>>>> 113c241cc680869b7405af27e78c1917ce70fcaa
   });
 
   laptopSchema.pre('save', function (next) {
@@ -181,9 +149,4 @@ const laptopSchema = new mongoose.Schema({
   };
 
 
-
-
-<<<<<<< HEAD
-=======
 export default mongoose.model('laptop', laptopSchema);
->>>>>>> 113c241cc680869b7405af27e78c1917ce70fcaa

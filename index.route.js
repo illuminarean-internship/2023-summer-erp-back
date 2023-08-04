@@ -9,9 +9,12 @@ import swRoute from './src/item/software/sw.route.js';
 import MockupRoute from './src/item/testdevice/mockop.route.js';
 import laptopRoute from './src/item/laptop/laptopRoute.js';
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
+=======
+>>>>>>> 113c241cc680869b7405af27e78c1917ce70fcaa
 
 const router = express.Router();
 

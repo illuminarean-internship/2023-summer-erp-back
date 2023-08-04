@@ -65,7 +65,24 @@ const AccSchema = new mongoose.Schema({
   createAt: {
     type: Date,
     default: Date.now
+  },
+  dateAvail: {
+    type: Date,
+    required: false
+  },
+  daysLeft: {
+    type: Number,
+    default: 0,
+    required: false
   }
+});
+
+AccSchema.pre('save', function (next) {
+  const today = new Date();
+  const diffInMilliseconds = this.dateAvail - today;
+  const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+  this.daysLeft = diffInDays;
+  next();
 });
 
 AccSchema.method({

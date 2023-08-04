@@ -111,11 +111,7 @@ const get = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-<<<<<<< HEAD
     illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history,
-=======
-    illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history, 
->>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
     dateAvail, daysLeft } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
@@ -181,13 +177,10 @@ const update = async (req, res, next) => {
     const { laptopId } = req.params;
     const { category, location, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
       illumiSerial, color, purchaseDate, purchaseFrom, remarks, history, dateAvail, daysLeft } = req.body;
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
 
 
 
@@ -216,13 +209,10 @@ const update = async (req, res, next) => {
     if(purchaseFrom) laptop.purchaseFrom =purchaseFrom;
     if(remarks) laptop.remarks =remarks;
     if (dateAvail) laptop.dateAvail =dateAvail;
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> 113c241 (added availDate and automatic daysLeft calculation)
 
 
 

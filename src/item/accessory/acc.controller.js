@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
       accs.map(async (item) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-          isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice
+          isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -24,7 +24,7 @@ const list = async (req, res, next) => {
         return {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
           purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-          history
+          history, dateAvail, daysLeft
         };
       })
     );
@@ -42,7 +42,7 @@ const get = async (req, res, next) => {
     if (!acc) { const err = new APIError('No such acc exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-      isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice
+      isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
     } = acc; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -51,7 +51,7 @@ const get = async (req, res, next) => {
     const accInfo = {
       _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
       purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-      history
+      history, dateAvail, daysLeft
     };
     return res.json(accInfo);
   } catch (err) {
@@ -64,7 +64,7 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location
+      history, price, surtax, totalPrice, location, dateAvail, daysLeft
     } = req.body;
 
     // find the team is existing
@@ -79,7 +79,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const acc = new Acc({
       model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, userId
+      history, price, surtax, totalPrice, userId, dateAvail, daysLeft
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     acc.isUnreserved = isUnreserved;
@@ -101,7 +101,7 @@ const update = async (req, res, next) => {
     const { accId } = req.params;
     const {
       model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location
+      history, price, surtax, totalPrice, location, dateAvail, daysLeft
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -123,6 +123,8 @@ const update = async (req, res, next) => {
     if (surtax) acc.surtax = surtax;
     if (purchasedFrom) acc.purchasedFrom = purchasedFrom;
     if (totalPrice) acc.totalPrice = totalPrice;
+    if (dateAvail) laptop.dateAvail =dateAvail;
+
 
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(acc.userId)) {

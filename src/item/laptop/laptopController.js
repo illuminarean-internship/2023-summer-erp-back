@@ -11,29 +11,22 @@ const list = async (req, res, next) => {
     const query = req.query;
     const { location } = req.query;
     //if(team){delete query.team;}
-    if(location){delete query.location;}
- laptops = await Laptop.findQuery(query);
+    if (location) { delete query.location; }
+    const laptops = await Laptop.findQuery(query);
     let laptopList = await Promise.all(
         laptops.map(async (item) => {
           const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
             illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
-            isRepair, archive, createAt, dateAvail, daysLeft } = item;                
-            const user = await User.get(userId);
-        const location = user.name;
-        //let team = "";
-        //if(user.teamId){  
-        //const teamObj = await Team.get(user.teamId);
-        //team = teamObj.name;}
-        let history=[];
-        if(archive.length!=0){history= parseToObjectList(archive);}
+            isRepair, archive, createAt, dateAvail, daysLeft } = item;
+        const location = (await User.get(userId)).name;
+        const history = archive.length !== 0 ? parseToObjectList(archive) : [];
         // Rearrange the keys, add the new key, and create a new object
         return { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
           illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
-          isRepair, archive, createAt, dateAvail, daysLeft };
+          isRepair, createAt, dateAvail, daysLeft, history };
       })
     );
-   //if(team) desktopList = await desktopList.filter((item)=>item.team==team);
-   if(location) laptopList= await laptopList.filter((item)=>item.name==location);
+    if (location) laptopList = await laptopList.filter((item)=> item.name === location);
     res.json(laptopList);
   } catch (err) {
     next(err);
@@ -44,25 +37,17 @@ const get = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const laptop = await Laptop.get(laptopId);
-    if (laptop){
+    if (laptop) {
       const item = laptop;
       const { _id, category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
-        isRepair, archive, createAt, dateAvail, daysLeft } = item;      
-      const user = await User.get(userId);
-      const location = user.name;
-      //let team = "";
-      //if(user.teamId){
-      //const teamObj = await Team.get(user.teamId);
-      //team = teamObj.name;}
-      //const title = name;
-      let history=[];
-      //res.json(archive);
-      if(archive.length!=0){history= parseToObjectList(archive);}
+        isRepair, archive, createAt, dateAvail, daysLeft } = item;
+      const location = (await User.get(userId)).name;
+      const history = archive.length !== 0 ? parseToObjectList(archive) : [];
       // Rearrange the keys, add the new key, and create a new object
       const laptopInfo= { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
-        isRepair, archive, createAt, dateAvail, daysLeft };
+        isRepair, history, createAt, dateAvail, daysLeft };
       return res.json(laptopInfo); }
     const err = new APIError('No such laptop exists!', httpStatus.NOT_FOUND);
     return next(err);
@@ -73,9 +58,11 @@ const get = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const { category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-    illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history,
-    dateAvail, daysLeft } = req.body;
+    const {
+      category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
+      illumiSerial, color, purchaseDate, purchaseFrom, remarks, location, history,
+      dateAvail, daysLeft
+    } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
 
     //find the team is existing
@@ -89,17 +76,18 @@ const create = async (req, res, next) => {
     //fill Laptopschema
     const userId = userObj._id;
     const laptop = new Laptop({ category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, userId, dateAvail, daysLeft });
-    if(remarks) laptop.remarks = remarks;
-    const {isUnreserved,isArchived,isRepair} = checkLocation(location);
-    if(isUnreserved) laptop.isUnreserved=true;
-    if(isArchived) laptop.isArchived=true;
-    if(isRepair) laptop.isRepair=true;
-    if(history) laptop.archive=parseToStringList(history);
+      illumiSerial, color, purchaseDate, purchaseFrom, userId, dateAvail, daysLeft, history });
+    if (remarks) laptop.remarks = remarks;
+    const {
+      isUnreserved, isArchived, isRepair } = checkLocation(location);
+    if (isUnreserved) laptop.isUnreserved = true;
+    if (isArchived) laptop.isArchived = true;
+    if (isRepair) laptop.isRepair = true; // this would not be working
+    if (history) laptop.archive = parseToStringList(history);
     const savedLaptop = await laptop.save();
 
     //update item list of user
-    userObj.numOfAssets=userObj.numOfAssets+1;
+    userObj.numOfAssets += 1;
     await userObj.save();
     return res.json(savedLaptop);
   } catch (err) {
@@ -112,29 +100,22 @@ const update = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const { category, location, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, remarks, history, dateAvail, daysLeft } = req.body;
-
-
-
-
-
-
-
+      illumiSerial, color, purchaseDate, purchaseFrom, remarks, history, dateAvail } = req.body;
 
     //Hidden problem!!same user name??? => should be ID
     //validation : laptopId is valid? & location is valid?
     const laptop = await Laptop.get(laptopId);
-    if(!laptop) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
+    if (!laptop) return next(new APIError(`Id is invalid`, httpStatus.NOT_FOUND));
     const validation = await User.getByName(location);
-    if(location&&!validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
-   
+    if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
+
     //if contents changed-> just updated
-    if(category) laptop.category=category;
-    if(modelName) laptop.modelName=modelName;
-    if(CPU) laptop.CPU=CPU;
-    if(RAM) laptop.RAM=RAM;
-    if(SSD) laptop.SSD=SSD;
-    if(serialNumber) laptop.serialNumber=serialNumber;
+    if(category) laptop.category = category;
+    if(modelName) laptop.modelName = modelName;
+    if(CPU) laptop.CPU = CPU;
+    if(RAM) laptop.RAM = RAM;
+    if(SSD) laptop.SSD = SSD;
+    if(serialNumber) laptop.serialNumber = serialNumber;
     if(warranty) laptop.warranty=warranty;
     if(price) laptop.price=price;
     if(surtax) laptop.surtax=surtax;
@@ -145,13 +126,6 @@ const update = async (req, res, next) => {
     if(purchaseFrom) laptop.purchaseFrom =purchaseFrom;
     if(remarks) laptop.remarks =remarks;
     if (dateAvail) laptop.dateAvail =dateAvail;
-
-
-
-
-
-
-
 
     //if location changed-> update user schema and archive
     if(location&&!validation._id.equals(laptop.userId)){
@@ -170,7 +144,6 @@ const update = async (req, res, next) => {
       await new_userObj.save();
 
       laptop.userId=new_userObj._id;
-
     }
     if (history) { laptop.archive = parseToStringList(history); }
     const laptopSaved = await laptop.save();
@@ -184,9 +157,9 @@ const remove = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const laptop = await Laptop.get(laptopId);
-    if(!laptop) return next( new APIError('No such laptop exists!', httpStatus.NOT_FOUND));
+    if (!laptop) return next(new APIError('No such laptop exists!', httpStatus.NOT_FOUND));
     const userObj = await User.get(laptop.userId);
-    userObj.numOfAssets= userObj.numOfAssets-1;
+    userObj.numOfAssets -= 1;
     await userObj.save();
     const result = await Laptop.delete(laptopId);
     return res.json(result);

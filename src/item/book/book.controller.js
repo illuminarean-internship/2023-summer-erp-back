@@ -24,7 +24,11 @@ const list = async (req, res, next) => {
         const location = user.name;
         const team = user.teamId ? (await Team.get(user.teamId)).name : '';
         const title = name;
-        const history = log.length !== 0 ? parseToObjectList(log) : [];
+        const history = log.length !== 0 ? parseToObjectList(log) : [{
+          startDate: purchaseDate.toISOString().split('T')[0],
+          endDate: '',
+          historyLocation: location,
+          historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, title, team, location, purchaseDate, purchasedFrom, price, currency,
@@ -49,11 +53,17 @@ const get = async (req, res, next) => {
       _id, name, purchaseDate, purchasedFrom, price, currency,
       isUnreserved, isArchived, userId, log, createAt
     } = book; // Destructure the original object
+    
     const user = await User.get(userId);
     const location = user.name;
     const team = user.teamId ? (await Team.get(user.teamId)).name : '';
     const title = name;
-    const history = log.length !== 0 ? parseToObjectList(log) : [];
+    
+    const history = log.length !== 0 ? parseToObjectList(log) : [{
+      startDate: purchaseDate.toISOString().split('T')[0],
+      endDate: '',
+      historyLocation: location,
+      historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const bookInfo = {
       _id, title, team, location, purchaseDate, purchasedFrom, price, currency,

@@ -22,7 +22,11 @@ const list = async (req, res, next) => {
         const user = await User.get(userId);
         const location = user.name;
         const team = user.teamId ? (await Team.get(user.teamId)).name : '';
-        const history = log.length !== 0 ? parseToObjectList(log) : [];
+        const history = log.length !== 0 ? parseToObjectList(log) : [{
+          startDate: purchaseDate.toISOString().split('T')[0],
+          endDate: '',
+          historyLocation: location,
+          historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, team, location, RAM, SSD, serialNumber, condition, color,
@@ -50,7 +54,11 @@ const get = async (req, res, next) => {
     const user = await User.get(userId);
     const location = user.name;
     const team = user.teamId ? await Team.get(user.teamId).name : '';
-    const history = log.length !== 0 ? parseToObjectList(log) : [];
+    const history = log.length !== 0 ? parseToObjectList(log) : [{
+      startDate: purchaseDate.toISOString().split('T')[0],
+      endDate: '',
+      historyLocation: location,
+      historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const MockupInfo = {
       _id, model, category, team, location, RAM, SSD, serialNumber, condition, color,

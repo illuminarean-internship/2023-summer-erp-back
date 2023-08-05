@@ -19,7 +19,11 @@ const list = async (req, res, next) => {
         } = item;
         const user = await User.get(userId);
         const location = user.name;
-        const history = log.length !== 0 ? parseToObjectList(log) : [];
+        const history = log.length !== 0 ? parseToObjectList(log) : [{
+          startDate: purchaseDate.toISOString().split('T')[0],
+          endDate: '',
+          historyLocation: location,
+          historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
@@ -46,7 +50,11 @@ const get = async (req, res, next) => {
     } = acc; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
-    const history = log.length !== 0 ? parseToObjectList(log) : [];
+    const history = log.length !== 0 ? parseToObjectList(log) : [{
+      startDate: purchaseDate.toISOString().split('T')[0],
+      endDate: '',
+      historyLocation: location,
+      historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const accInfo = {
       _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,

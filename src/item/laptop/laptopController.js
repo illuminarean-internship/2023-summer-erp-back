@@ -19,7 +19,11 @@ const list = async (req, res, next) => {
             illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
             isRepair, archive, createAt, dateAvail, daysLeft } = item;
         const location = (await User.get(userId)).name;
-        const history = archive.length !== 0 ? parseToObjectList(archive) : [];
+        const history = log.length !== 0 ? parseToObjectList(log) : [{
+          startDate: purchaseDate.toISOString().split('T')[0],
+          endDate: '',
+          historyLocation: location,
+          historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
           illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
@@ -43,7 +47,11 @@ const get = async (req, res, next) => {
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, archive, createAt, dateAvail, daysLeft } = item;
       const location = (await User.get(userId)).name;
-      const history = archive.length !== 0 ? parseToObjectList(archive) : [];
+      const history = log.length !== 0 ? parseToObjectList(log) : [{
+        startDate: purchaseDate.toISOString().split('T')[0],
+        endDate: '',
+        historyLocation: location,
+        historyRemark: ''}];
       // Rearrange the keys, add the new key, and create a new object
       const laptopInfo= { _id, category, modelName, CPU, RAM, SSD, serialNumber, location, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,

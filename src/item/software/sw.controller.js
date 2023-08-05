@@ -24,7 +24,11 @@ const list = async (req, res, next) => {
           reference, currency, isUnreserved, isArchived, userId, log, createAt
         } = item; // Destructure the original object
         const user = await User.get(userId).name;
-        const history = log.length !== 0 ? parseToObjectList(log) : [];
+        const history = log.length !== 0 ? parseToObjectList(log) : [{
+          startDate: purchaseDate.toISOString().split('T')[0],
+          endDate: '',
+          historyLocation: location,
+          historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, name, purchaseDate, unitPrice, quantity,
@@ -48,7 +52,11 @@ const get = async (req, res, next) => {
       currency, isUnreserved, isArchived, userId, log, createAt
     } = sw; // Destructure the original object
     const user = await User.get(userId).name;
-    const history = log.length !== 0 ? parseToObjectList(log) : [];
+    const history = log.length !== 0 ? parseToObjectList(log) : [{
+      startDate: purchaseDate.toISOString().split('T')[0],
+      endDate: '',
+      historyLocation: location,
+      historyRemark: ''}];
     // const totalPrice = quantity * unitPrice;
     // Rearrange the keys, add the new key, and create a new object
     const swInfo = {

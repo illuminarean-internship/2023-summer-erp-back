@@ -46,7 +46,7 @@ const get = async (req, res, next) => {
     const book = await Book.get(bookId);
     if (!book) { const err = new APIError('No such book exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, name, purchaseDate, purchasedFrom, price,
+      _id, name, purchaseDate, purchasedFrom, price, currency,
       isUnreserved, isArchived, userId, log, createAt
     } = book; // Destructure the original object
     const user = await User.get(userId);

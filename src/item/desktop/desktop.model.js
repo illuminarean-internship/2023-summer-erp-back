@@ -28,7 +28,7 @@ const DesktopSchema = new mongoose.Schema({
     default: []
   },
   totalPrice: {
-    type: Number
+    type: String
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

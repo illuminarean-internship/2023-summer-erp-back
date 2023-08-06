@@ -37,6 +37,11 @@ const SwSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  remarks: {
+    type: String,
+    required: false,
+    default: ''
+  },
   isArchived: {
     type: Boolean,
     default: false

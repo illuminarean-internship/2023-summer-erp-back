@@ -20,7 +20,7 @@ const list = async (req, res, next) => {
     const swList = await Promise.all(
       sws.map(async (item) => {
         const {
-          _id, name, purchaseDate, unitPrice, quantity, totalPrice,
+          _id, name, purchaseDate, unitPrice, quantity, totalPrice, remarks,
           reference, currency, isUnreserved, isArchived, userId, log, createAt
         } = item; // Destructure the original object
         const user = (await User.get(userId)).name;
@@ -31,7 +31,7 @@ const list = async (req, res, next) => {
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, name, purchaseDate, unitPrice, quantity,
+          _id, name, purchaseDate, unitPrice, quantity, remarks,
           totalPrice, currency, reference, user, isUnreserved, isArchived, userId, history, createAt
         };
       })
@@ -49,7 +49,7 @@ const get = async (req, res, next) => {
     if (!sw) { const err = new APIError('No such sw exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, name, purchaseDate, unitPrice, quantity, reference, totalPrice,
-      currency, isUnreserved, isArchived, userId, log, createAt
+      currency, isUnreserved, isArchived, userId, log, createAt, remarks
     } = sw; // Destructure the original object
     const user = (await User.get(userId)).name;
     const history = log.length !== 0 ? parseToObjectList(log) : [{
@@ -61,7 +61,7 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const swInfo = {
       _id, name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference,
-      user, isUnreserved, isArchived, userId, history, createAt
+      user, isUnreserved, isArchived, userId, history, createAt, remarks
     };
     return res.json(swInfo);
   } catch (err) {
@@ -73,7 +73,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      name, purchaseDate, unitPrice, quantity, currency, reference, user, history, totalPrice
+      name, purchaseDate, unitPrice, quantity, currency, reference, user, history, totalPrice, remarks
     } = req.body;
 
     // find the team is existing
@@ -87,7 +87,7 @@ const create = async (req, res, next) => {
     // fill swschema
     const userId = userObj._id;
     const sw = new SW({
-      name, purchaseDate, unitPrice, totalPrice, quantity, currency, reference, userId
+      name, purchaseDate, unitPrice, totalPrice, quantity, currency, reference, userId, remarks
     });
     const { isUnreserved, isArchived } = checkLocation(user);
     sw.isUnreserved = isUnreserved;
@@ -108,7 +108,7 @@ const update = async (req, res, next) => {
   try {
     const { swId } = req.params;
     const {
-      name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference, user, history,
+      name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference, user, history, remarks
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -125,7 +125,8 @@ const update = async (req, res, next) => {
     if (unitPrice) sw.unitPrice = unitPrice;
     if (quantity) sw.quantity = quantity;
     if (totalPrice) sw.totalPrice = totalPrice;
-    if (reference) sw.remarks = reference;
+    if (reference) sw.reference = reference;
+    if (remarks) sw.remarks = remarks;
     if (currency) sw.currency = currency;
 
     // if location changed-> update user schema and logg

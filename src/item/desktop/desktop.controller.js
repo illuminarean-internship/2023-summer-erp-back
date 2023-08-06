@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
       desktops.map(async (item) => {
         const {
           _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-          details, userId, log, createAt, totalPrice
+          details, userId, log, createAt, totalPrice, remarks
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -27,7 +27,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-          location, details, userId, history, createAt, totalPrice
+          location, details, userId, history, createAt, totalPrice, remarks
         };
       })
     );
@@ -45,7 +45,7 @@ const get = async (req, res, next) => {
     if (!desktop) { const err = new APIError('No such desktop exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-      details, userId, log, createAt, totalPrice
+      details, userId, log, createAt, totalPrice, remarks
     } = desktop; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -57,7 +57,7 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const desktopInfo = {
       _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-      location, details, userId, history, createAt, totalPrice
+      location, details, userId, history, createAt, totalPrice, remarks
     };
     return res.json(desktopInfo);
   } catch (err) {
@@ -69,7 +69,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history
+      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history, remarks
     } = req.body;
 
     // find the team is existing
@@ -86,7 +86,7 @@ const create = async (req, res, next) => {
     // fill desktopschema
     const userId = userObj._id;
     const desktop = new Desktop({
-      illumiSerial, purchaseDate, purchasedFrom, purpose, details, userId, totalPrice
+      illumiSerial, purchaseDate, purchasedFrom, purpose, details, userId, totalPrice, remarks
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     desktop.isUnreserved = isUnreserved;
@@ -107,7 +107,7 @@ const update = async (req, res, next) => {
   try {
     const { desktopId } = req.params;
     const {
-      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details
+      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details, remarks
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -121,6 +121,7 @@ const update = async (req, res, next) => {
     // if contents changed-> just updated
     if (illumiSerial) desktop.illumiSerial = illumiSerial;
     if (purpose) desktop.purpose = purpose;
+    if (remarks) desktop.remarks = remarks;
     if (details) {
       desktop.details = details;
       let totalPrice = 0;

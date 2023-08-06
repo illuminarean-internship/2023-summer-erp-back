@@ -69,7 +69,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history, remarks
+      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history, remarks, totalPrice
     } = req.body;
 
     // find the team is existing
@@ -78,10 +78,6 @@ const create = async (req, res, next) => {
       const errorMessage = `The location ${location} is not existing!`;
       // if not, return error
       return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
-    }
-    let totalPrice = 0;
-    for (const detail of details) {
-      totalPrice += parseFloat(detail.price);
     }
     // fill desktopschema
     const userId = userObj._id;
@@ -107,7 +103,7 @@ const update = async (req, res, next) => {
   try {
     const { desktopId } = req.params;
     const {
-      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details, remarks
+      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details, remarks, totalPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -121,14 +117,10 @@ const update = async (req, res, next) => {
     // if contents changed-> just updated
     if (illumiSerial) desktop.illumiSerial = illumiSerial;
     if (purpose) desktop.purpose = purpose;
+    if (totalPrice) desktop.totalPrice = totalPrice;
     if (remarks) desktop.remarks = remarks;
     if (details) {
       desktop.details = details;
-      let totalPrice = 0;
-      for (const detail of details) {
-        totalPrice += parseFloat(detail.price);
-      }
-      desktop.totalPrice = totalPrice
     }
     if (purchaseDate) desktop.purchasedDate = purchaseDate; 
     if (purchasedFrom) desktop.purchaseFrom = purchasedFrom;

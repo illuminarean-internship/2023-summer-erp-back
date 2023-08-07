@@ -20,11 +20,11 @@ const laptopSchema = new mongoose.Schema({
       required: false
     },
     RAM:{
-      type: Number,
+      type: String,
       required: false
     },
     SSD:{
-      type: Number,
+      type: String,
       required: false
     },
     remarks: {

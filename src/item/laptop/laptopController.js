@@ -19,7 +19,7 @@ const list = async (req, res, next) => {
             illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
             isRepair, archive, createAt, dateAvail, daysLeft } = item;
         const location = (await User.get(userId)).name;
-        const history = log.length !== 0 ? parseToObjectList(log) : [{
+        const history = archive.length !== 0 ? parseToObjectList(archive) : [{
           startDate: purchaseDate.toISOString().split('T')[0],
           endDate: '',
           historyLocation: location,
@@ -47,7 +47,7 @@ const get = async (req, res, next) => {
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, archive, createAt, dateAvail, daysLeft } = item;
       const location = (await User.get(userId)).name;
-      const history = log.length !== 0 ? parseToObjectList(log) : [{
+      const history = archive.length !== 0 ? parseToObjectList(archive) : [{
         startDate: purchaseDate.toISOString().split('T')[0],
         endDate: '',
         historyLocation: location,

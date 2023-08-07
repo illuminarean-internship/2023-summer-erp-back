@@ -23,6 +23,10 @@ const AccSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  remarks: {
+    type: String,
+    required: false
+  },
   currency: {
     type: String,
     required: false

@@ -59,7 +59,7 @@ const get = async (req, res, next) => {
     const accInfo = {
       _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency,
       purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-      history, dateAvail, daysLeft
+      history, dateAvail, daysLeft, remarks
     };
     return res.json(accInfo);
   } catch (err) {
@@ -72,7 +72,7 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location, dateAvail, daysLeft
+      history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks
     } = req.body;
 
     // find the team is existing
@@ -87,7 +87,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const acc = new Acc({
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, userId, dateAvail, daysLeft
+      history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     acc.isUnreserved = isUnreserved;
@@ -109,7 +109,7 @@ const update = async (req, res, next) => {
     const { accId } = req.params;
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location, dateAvail, daysLeft
+      history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -128,11 +128,12 @@ const update = async (req, res, next) => {
     if (serialNumber) acc.serialNumber = serialNumber;
     if (price) acc.price = price;
     if (color) acc.color = color;
+    if (remarks) acc.remarks = remarks;
     if (currency) acc.currency  = currency;
     if (surtax) acc.surtax = surtax;
     if (purchasedFrom) acc.purchasedFrom = purchasedFrom;
     if (totalPrice) acc.totalPrice = totalPrice;
-    if (dateAvail) laptop.dateAvail =dateAvail;
+    if (dateAvail) acc.dateAvail =dateAvail;
 
 
     // if location changed-> update user schema and logg

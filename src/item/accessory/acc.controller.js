@@ -45,7 +45,7 @@ const get = async (req, res, next) => {
     const acc = await Acc.get(accId);
     if (!acc) { const err = new APIError('No such acc exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency
+      _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency,
       isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
     } = acc; // Destructure the original object
     const user = await User.get(userId);
@@ -57,7 +57,7 @@ const get = async (req, res, next) => {
       historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const accInfo = {
-      _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency
+      _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency,
       purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
       history, dateAvail, daysLeft
     };

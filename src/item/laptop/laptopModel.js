@@ -11,7 +11,7 @@ const laptopSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    modelName: {
+    model: {
       type: String,
       required: true
     },

@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
     const laptops = await Laptop.findQuery(query);
     let laptopList = await Promise.all(
         laptops.map(async (item) => {
-          const { _id, category, modelName, CPU, RAM, SSD, serialNumber,currency, remarks, totalPrice, warranty, price, surtax,
+          const { _id, category, model, CPU, RAM, SSD, serialNumber,currency, remarks, totalPrice, warranty, price, surtax,
             illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
             isRepair, archive, createAt, dateAvail, daysLeft } = item;
         const location = (await User.get(userId)).name;
@@ -25,7 +25,7 @@ const list = async (req, res, next) => {
           historyLocation: location,
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
-        return { _id, category, modelName, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, location, warranty, price, surtax,
+        return { _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, location, warranty, price, surtax,
           illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
           isRepair, createAt, dateAvail, daysLeft, history };
       })
@@ -43,7 +43,7 @@ const get = async (req, res, next) => {
     const laptop = await Laptop.get(laptopId);
     if (laptop) {
       const item = laptop;
-      const { _id, category, modelName, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, warranty, price, surtax,
+      const { _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, archive, createAt, dateAvail, daysLeft } = item;
       const location = (await User.get(userId)).name;
@@ -53,7 +53,7 @@ const get = async (req, res, next) => {
         historyLocation: location,
         historyRemark: ''}];
       // Rearrange the keys, add the new key, and create a new object
-      const laptopInfo= { _id, category, modelName, CPU, RAM, SSD, currency, remarks, totalPrice, serialNumber, location, warranty, price, surtax,
+      const laptopInfo= { _id, category, model, CPU, RAM, SSD, currency, remarks, totalPrice, serialNumber, location, warranty, price, surtax,
         illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, history, createAt, dateAvail, daysLeft };
       return res.json(laptopInfo); }
@@ -67,7 +67,7 @@ const get = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const {
-      category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
+      category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
       illumiSerial, color, purchaseDate, purchaseFrom, currency, remarks, totalPrice, location, history,
       dateAvail, daysLeft
     } = req.body;
@@ -83,7 +83,7 @@ const create = async (req, res, next) => {
 
     //fill Laptopschema
     const userId = userObj._id;
-    const laptop = new Laptop({ category, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
+    const laptop = new Laptop({ category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
       illumiSerial, color, purchaseDate, currency, remarks, totalPrice, purchaseFrom, userId, dateAvail, daysLeft, history });
     const {
       isUnreserved, isArchived, isRepair } = checkLocation(location);
@@ -106,7 +106,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
-    const { category, location, modelName, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
+    const { category, location, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
       illumiSerial, color, purchaseDate, purchaseFrom, currency, remarks, totalPrice, history, dateAvail } = req.body;
 
     //Hidden problem!!same user name??? => should be ID
@@ -118,7 +118,7 @@ const update = async (req, res, next) => {
 
     //if contents changed-> just updated
     if(category) laptop.category = category;
-    if(modelName) laptop.modelName = modelName;
+    if(model) laptop.model = model;
     if(CPU) laptop.CPU = CPU;
     if(RAM) laptop.RAM = RAM;
     if(SSD) laptop.SSD = SSD;

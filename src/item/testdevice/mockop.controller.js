@@ -53,7 +53,7 @@ const get = async (req, res, next) => {
     } = mockup; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
-    const team = user.teamId ? await Team.get(user.teamId).name : '';
+    const team = user.teamId ? (await Team.get(user.teamId)).name : '';
     const history = log.length !== 0 ? parseToObjectList(log) : [{
       startDate: purchaseDate.toISOString().split('T')[0],
       endDate: '',

@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
       accs.map(async (item) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-          isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
+          isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -28,7 +28,7 @@ const list = async (req, res, next) => {
         return {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
           purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-          history, dateAvail, daysLeft
+          history, dateAvail, daysLeft, remarks
         };
       })
     );

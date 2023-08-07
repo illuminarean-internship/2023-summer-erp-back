@@ -15,7 +15,7 @@ const MockupSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
-  SSD: {
+  memory: {
     type: Number,
     required: false
   },

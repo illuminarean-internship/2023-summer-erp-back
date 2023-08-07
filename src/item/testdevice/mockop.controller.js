@@ -16,7 +16,7 @@ const list = async (req, res, next) => {
     let mockupList = await Promise.all(
       mockups.map(async (item) => {
         const {
-          _id, model, category, RAM, SSD, serialNumber, condition, color, purchasedFrom,
+          _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
           remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice
         } = item;
         const user = await User.get(userId);
@@ -29,7 +29,7 @@ const list = async (req, res, next) => {
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, model, category, team, location, RAM, SSD, serialNumber, condition, color,
+          _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
           purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice
         };
       })
@@ -48,7 +48,7 @@ const get = async (req, res, next) => {
     const mockup = await Mockup.get(mockupId);
     if (!mockup) { const err = new APIError('No such mockup exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, model, category, RAM, SSD, serialNumber, condition, color, purchasedFrom,
+      _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
       remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice
     } = mockup; // Destructure the original object
     const user = await User.get(userId);
@@ -61,7 +61,7 @@ const get = async (req, res, next) => {
       historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const MockupInfo = {
-      _id, model, category, team, location, RAM, SSD, serialNumber, condition, color,
+      _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
       purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice
     };
     return res.json(MockupInfo);
@@ -74,7 +74,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      model, category, RAM, SSD, serialNumber, condition, color, purchasedFrom,
+      model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
       remarks, history, location, totalPrice
     } = req.body;
 
@@ -89,7 +89,7 @@ const create = async (req, res, next) => {
     // fill mockupschema
     const userId = userObj._id;
     const mockup = new Mockup({
-      model, category, RAM, SSD, serialNumber, condition, color, purchasedFrom,
+      model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
       remarks, userId, totalPrice
     });
     const { isUnreserved, isArchived } = checkLocation(location);
@@ -111,7 +111,7 @@ const update = async (req, res, next) => {
   try {
     const { mockupId } = req.params;
     const {
-      model, category, RAM, SSD, serialNumber, condition, color, purchasedFrom,
+      model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
       remarks, history, location, totalPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
@@ -127,7 +127,7 @@ const update = async (req, res, next) => {
     if (model) mockup.model = model;
     if (category) mockup.category = category;
     if (RAM) mockup.RAM = RAM;
-    if (SSD) mockup.SSD = SSD;
+    if (memory) mockup.memory = memory;
     if (serialNumber) mockup.serialNumber = serialNumber;
     if (condition) mockup.condition = condition;
     if (color) mockup.color = color;

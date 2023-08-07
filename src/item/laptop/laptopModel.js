@@ -27,6 +27,14 @@ const laptopSchema = new mongoose.Schema({
       type: Number,
       required: false
     },
+    remarks: {
+      type: String,
+      required: false
+    },
+    currency: {
+      type: String,
+      required: false
+    },
     serialNumber:{
       type:String,
       required: true
@@ -37,7 +45,7 @@ const laptopSchema = new mongoose.Schema({
       required: false
     },
     warranty:{
-      type:String,
+      type:Date,
       required:false
     },
     price:{
@@ -66,6 +74,10 @@ const laptopSchema = new mongoose.Schema({
     },
     remarks:{
       type: String,
+      required: false
+    },
+    totalPrice:{
+      type: Number,
       required: false
     },
     //Additional info

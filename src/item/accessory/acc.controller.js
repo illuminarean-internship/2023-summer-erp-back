@@ -46,7 +46,7 @@ const get = async (req, res, next) => {
     if (!acc) { const err = new APIError('No such acc exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency,
-      isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
+      isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks
     } = acc; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;

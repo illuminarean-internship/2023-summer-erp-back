@@ -17,7 +17,7 @@ const list = async (req, res, next) => {
       mockups.map(async (item) => {
         const {
           _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-          remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice
+          remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice, currency
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -30,7 +30,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
-          purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice
+          purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice, currency
         };
       })
     );
@@ -49,7 +49,7 @@ const get = async (req, res, next) => {
     if (!mockup) { const err = new APIError('No such mockup exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice
+      remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice, currency 
     } = mockup; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -62,7 +62,8 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const MockupInfo = {
       _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
-      purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice
+      purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice,
+      currency
     };
     return res.json(MockupInfo);
   } catch (err) {
@@ -75,7 +76,7 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, history, location, totalPrice
+      remarks, history, location, totalPrice, currency
     } = req.body;
 
     // find the team is existing
@@ -90,7 +91,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const mockup = new Mockup({
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, userId, totalPrice
+      remarks, userId, totalPrice, currency
     });
     const { isUnreserved, isArchived } = checkLocation(location);
     mockup.isUnreserved = isUnreserved;
@@ -112,7 +113,7 @@ const update = async (req, res, next) => {
     const { mockupId } = req.params;
     const {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, history, location, totalPrice
+      remarks, history, location, totalPrice, currency
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -129,6 +130,7 @@ const update = async (req, res, next) => {
     if (RAM) mockup.RAM = RAM;
     if (memory) mockup.memory = memory;
     if (serialNumber) mockup.serialNumber = serialNumber;
+    if (currency) mockup.currency = currency;
     if (condition) mockup.condition = condition;
     if (color) mockup.color = color;
     if (remarks) mockup.remarks = remarks;

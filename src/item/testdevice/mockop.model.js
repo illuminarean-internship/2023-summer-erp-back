@@ -31,6 +31,10 @@ const MockupSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  currency: {
+    type: String,
+    required: false
+  },
   totalPrice: {
     type: Number,
     required: false

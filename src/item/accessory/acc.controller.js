@@ -45,7 +45,7 @@ const get = async (req, res, next) => {
     const acc = await Acc.get(accId);
     if (!acc) { const err = new APIError('No such acc exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
+      _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency
       isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft
     } = acc; // Destructure the original object
     const user = await User.get(userId);
@@ -57,7 +57,7 @@ const get = async (req, res, next) => {
       historyRemark: ''}];
     // Rearrange the keys, add the new key, and create a new object
     const accInfo = {
-      _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
+      _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency
       purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
       history, dateAvail, daysLeft
     };
@@ -71,7 +71,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
+      model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
       history, price, surtax, totalPrice, location, dateAvail, daysLeft
     } = req.body;
 
@@ -86,7 +86,7 @@ const create = async (req, res, next) => {
     // fill accschema
     const userId = userObj._id;
     const acc = new Acc({
-      model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
+      model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
       history, price, surtax, totalPrice, userId, dateAvail, daysLeft
     });
     const { isUnreserved, isArchived } = checkLocation(location);
@@ -108,7 +108,7 @@ const update = async (req, res, next) => {
   try {
     const { accId } = req.params;
     const {
-      model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
+      model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
       history, price, surtax, totalPrice, location, dateAvail, daysLeft
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
@@ -128,6 +128,7 @@ const update = async (req, res, next) => {
     if (serialNumber) acc.serialNumber = serialNumber;
     if (price) acc.price = price;
     if (color) acc.color = color;
+    if (currency) acc.currency  = currency;
     if (surtax) acc.surtax = surtax;
     if (purchasedFrom) acc.purchasedFrom = purchasedFrom;
     if (totalPrice) acc.totalPrice = totalPrice;

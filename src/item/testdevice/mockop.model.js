@@ -12,11 +12,11 @@ const MockupSchema = new mongoose.Schema({
     required: true
   },
   RAM: {
-    type: Number,
+    type: String,
     required: false
   },
   memory: {
-    type: Number,
+    type: String,
     required: false
   },
   serialNumber: {

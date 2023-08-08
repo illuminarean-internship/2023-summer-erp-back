@@ -34,7 +34,17 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  isAdmin: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  email: {
+    type: String,
+    required: false,
+    default: ''
+  },
 });
 
 /**

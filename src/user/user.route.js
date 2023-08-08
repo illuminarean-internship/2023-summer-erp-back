@@ -10,6 +10,9 @@ router.route('/')
   //.post(validate(reqValidation.createUser), userController.create);
   .post(userController.create);
 
+  router.route('/check')
+  .get(userController.check);
+
 router.route('/user/:userId')
   .get(userController.get)
   .put(userController.update)

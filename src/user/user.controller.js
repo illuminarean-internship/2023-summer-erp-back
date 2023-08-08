@@ -4,6 +4,17 @@ import User from './user.model.js';
 import Team from './team.model.js';
 import Project from './project.model.js';
 
+const check = async (req, res, next) => {
+  try {
+    const { email } = req.query;
+    const user = await User.getByEmail(email);
+    const isAdmin = user ? user.isAdmin : false;
+    res.json(isAdmin);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const list = async (req, res, next) => {
   try {
     const { limit = 50, skip = 0 } = req.query;
@@ -202,5 +213,6 @@ export default {
   get,
   create,
   update,
-  remove
+  remove,
+  check
 };

@@ -52,7 +52,7 @@ const AccSchema = new mongoose.Schema({
     required: false
   },
   // Additional info,
-  isUnreserved: {
+  isRepair: {
     type: Boolean,
     default: false
   },
@@ -82,6 +82,30 @@ const AccSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     required: false
+  },
+  issues: {
+    type: [String]
+  },
+  replace: {
+    type: String
+  },
+  request: {
+    type: String
+  },
+  repairPrice: {
+    type: Number
+  },
+  repairCurrency: {
+    type: String
+  },
+  repairDetails: {
+    type: String
+  },
+  resellPrice: {
+    type: Number
+  },
+  resellCurrency: {
+    type: String
   }
 });
 

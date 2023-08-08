@@ -11,7 +11,7 @@ export function parseToObjectList(stringList) {
       const historyRemark = splitedStr[3] ? splitedStr[3] : '';
   
         const parsedObject = {
-          //rowId,
+          rowId,
           startDate,
           endDate,
           historyLocation,

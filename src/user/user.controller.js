@@ -30,9 +30,9 @@ const updateAdmin = async (req, res, next) => {
   }
 };
 
-const adminList =  async (req, res, next) => {
+const adminList = async (req, res, next) => {
   try {
-    const users = await User.findByQuery(query);
+    const users = await User.findByQuery(req.query);
     res.json(users);
   } catch (err) {
     next(err);

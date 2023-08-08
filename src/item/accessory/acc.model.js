@@ -2,10 +2,46 @@
 /* eslint-disable object-shorthand */
 import mongoose from 'mongoose';
 
-const BookSchema = new mongoose.Schema({
-  name: {
+const AccSchema = new mongoose.Schema({
+  model: {
     type: String,
     required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  illuSerialNumber: {
+    type: String,
+    required: false
+  },
+  serialNumber: {
+    type: String,
+    required: false
+  },
+  color: {
+    type: String,
+    required: false
+  },
+  remarks: {
+    type: String,
+    required: false
+  },
+  currency: {
+    type: String,
+    required: false
+  },
+  price: {
+    type: Number,
+    required: false
+  },
+  surtax: {
+    type: Number,
+    required: false
+  },
+  totalPrice: {
+    type: Number,
+    required: false
   },
   purchaseDate: {
     type: Date,
@@ -13,16 +49,7 @@ const BookSchema = new mongoose.Schema({
   },
   purchasedFrom: {
     type: String,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  currency: {
-    type: String,
-    required: false,
-    default: '￦'
+    required: false
   },
   // Additional info,
   isUnreserved: {
@@ -46,13 +73,30 @@ const BookSchema = new mongoose.Schema({
   createAt: {
     type: Date,
     default: Date.now
+  },
+  dateAvail: {
+    type: Date,
+    required: false
+  },
+  daysLeft: {
+    type: Number,
+    default: 0,
+    required: false
   }
 });
 
-BookSchema.method({
+AccSchema.pre('save', function (next) {
+  const today = new Date();
+  const diffInMilliseconds = this.dateAvail - today;
+  const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+  this.daysLeft = diffInDays;
+  next();
 });
 
-BookSchema.statics = {
+AccSchema.method({
+});
+
+AccSchema.statics = {
   list: function () {
     return this.find({})
       .sort({ createdAt: -1 })
@@ -84,4 +128,4 @@ BookSchema.statics = {
   }
 };
 
-export default mongoose.model('Book', BookSchema);
+export default mongoose.model('Acc', AccSchema);

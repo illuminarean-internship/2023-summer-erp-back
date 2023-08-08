@@ -15,7 +15,7 @@ const SwSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  amount: {
+  quantity: {
     type: Number,
     required: true,
     default: 1
@@ -29,10 +29,18 @@ const SwSchema = new mongoose.Schema({
     required: false,
     default: ''
   },
+  totalPrice: {
+    type: Number
+  },
   // Additional info,
   isUnreserved: {
     type: Boolean,
     default: false
+  },
+  remarks: {
+    type: String,
+    required: false,
+    default: ''
   },
   isArchived: {
     type: Boolean,

@@ -12,7 +12,4 @@ router.route('/item/:swId')
   .put(swController.update)
   .delete(swController.remove);
 
-router.route('/history/:swId')
-  .put(swController.update)
-
 export default router;

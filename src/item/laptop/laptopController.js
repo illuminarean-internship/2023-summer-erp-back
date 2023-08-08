@@ -4,7 +4,7 @@ import User from '../../user/user.model.js';
 // import Team from '../../user/team.model.js';
 import Laptop from './laptopModel.js';
 import { parseToObjectList, parseToStringList } from '../history.function.js';
-import {checkLocation} from '../sub.function.js';
+import { checkLocation } from '../sub.function.js';
 
 const list = async (req, res, next) => {
   try {
@@ -19,8 +19,9 @@ const list = async (req, res, next) => {
         const {
           _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice,
           warranty, price, surtax, illumiSerial, color, purchaseDate, purchasedFrom, purpose,
-          userId, isUnreserved, isArchived,
-          isRepair, archive, createAt, dateAvail, daysLeft
+          userId, isArchived, archive, createAt, dateAvail, daysLeft,
+          isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+          resellPrice, resellCurrency, karrotPrice
         } = item;
         // eslint-disable-next-line no-shadow
         const location = (await User.get(userId)).name;
@@ -52,13 +53,14 @@ const list = async (req, res, next) => {
           purchasedFrom,
           purpose,
           userId,
-          isUnreserved,
           isArchived,
           isRepair,
           createAt,
           dateAvail,
           daysLeft,
-          history
+          history,
+          issues, replace, request, repairPrice, repairCurrency, repairDetails,
+          resellPrice, resellCurrency, karrotPrice
         };
       })
     );
@@ -78,8 +80,9 @@ const get = async (req, res, next) => {
       const {
         _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice,
         warranty, price, surtax, illumiSerial, color, purchaseDate, purchasedFrom, purpose,
-        userId, isUnreserved, isArchived,
-        isRepair, archive, createAt, dateAvail, daysLeft
+        userId, isArchived, archive, createAt, dateAvail, daysLeft,
+        isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+        resellPrice, resellCurrency, karrotPrice
       } = item;
       const location = (await User.get(userId)).name;
       const history = archive.length !== 0 ? parseToObjectList(archive) : [{
@@ -110,13 +113,13 @@ const get = async (req, res, next) => {
         purchasedFrom,
         purpose,
         userId,
-        isUnreserved,
         isArchived,
-        isRepair,
         history,
         createAt,
         dateAvail,
-        daysLeft
+        daysLeft,
+        isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+          resellPrice, resellCurrency, karrotPrice
       };
       return res.json(laptopInfo);
     }
@@ -133,7 +136,8 @@ const create = async (req, res, next) => {
       category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
       illumiSerial, color, purchaseDate, purchasedFrom, currency, remarks,
       totalPrice, location, history,
-      dateAvail, daysLeft
+      dateAvail, daysLeft, isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+      resellPrice, resellCurrency, karrotPrice
     } = req.body;
     // Hidden problem!!same user name??? => should be replaced to userId
 
@@ -169,10 +173,21 @@ const create = async (req, res, next) => {
       daysLeft,
       history
     });
-    const { isUnreserved, isArchived, isRepair } = checkLocation(location);
-    if (isUnreserved) laptop.isUnreserved = true;
-    if (isArchived) laptop.isArchived = true;
-    if (isRepair) laptop.isRepair = true; // this would not be working
+    const { isArchived } = checkLocation(location);
+    laptop.isArchived = isArchived;
+    laptop.isRepair = isRepair;
+    if (isArchived || isRepair) {
+      laptop.issues = issues;
+      laptop.replace = replace;
+      laptop.repairPrice = repairPrice;
+      laptop.repairCurrency = repairCurrency;
+      laptop.repairDetails = repairDetails;
+      laptop.request = request;
+      laptop.resellPrice = resellPrice;
+      laptop.resellCurrency = resellCurrency;
+      laptop.karrotPrice= karrotPrice;
+    }
+
     if (history) laptop.archive = parseToStringList(history);
     const savedLaptop = await laptop.save();
 
@@ -192,7 +207,8 @@ const update = async (req, res, next) => {
       category, location, model, CPU, RAM, SSD, serialNumber, warranty,
       price, surtax,
       illumiSerial, color, purchaseDate, purchasedFrom, currency,
-      remarks, totalPrice, history, dateAvail
+      remarks, totalPrice, history, dateAvail, isRepair, issues, replace, request, repairPrice,
+      repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = req.body;
 
     // Hidden problem!!same user name??? => should be ID
@@ -225,10 +241,20 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and archive
     if (location && !validation._id.equals(laptop.userId)) {
       // update user schema
-      const { isUnreserved, isArchived, isRepair} = checkLocation(location);
-      if (isUnreserved) laptop.isUnreserved = true;
-      if (isArchived) laptop.isArchived = true;
-      if (isRepair) laptop.isArchived = true;
+      const { isArchived } = checkLocation(location);
+      laptop.isArchived = isArchived;
+      if (isRepair) laptop.isRepair = isRepair;
+      if (isArchived || laptop.isRepair) {
+        if (issues) laptop.issues = issues;
+        if (replace) laptop.replace = replace;
+        if (repairPrice) laptop.repairPrice = repairPrice;
+        if (repairCurrency) laptop.repairCurrency = repairCurrency;
+        if (repairDetails) laptop.repairDetails = repairDetails;
+        if (request) laptop.request = request;
+        if (resellPrice) laptop.resellPrice = resellPrice;
+        if (karrotPrice) laptop.karrotPrice = karrotPrice;
+        if (resellCurrency) laptop.resellCurrency = resellCurrency;
+      }
 
       const userObj = await User.get(laptop.userId);
       userObj.numOfAssets -= 1;

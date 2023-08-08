@@ -8,7 +8,7 @@ const check = async (req, res, next) => {
   try {
     const { email } = req.query;
     const user = await User.getByEmail(email);
-    const isAdmin = user ? user.isAdmin : false;
+    const isAdmin = user ? { isAdmin: user.isAdmin } : { isAdmin: false };
     res.json(isAdmin);
   } catch (err) {
     next(err);

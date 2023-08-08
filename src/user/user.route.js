@@ -13,6 +13,10 @@ router.route('/')
   router.route('/check')
   .get(userController.check);
 
+  router.route('/admin')
+  .put(userController.updateAdmin)
+  .get(userController.adminList);
+
 router.route('/user/:userId')
   .get(userController.get)
   .put(userController.update)

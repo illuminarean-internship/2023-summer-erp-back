@@ -78,6 +78,10 @@ UserSchema.statics = {
     return this.findOne({ email: email }).exec();
   },
 
+  findByQuery: function (query) {
+    return this.find(query).exec();
+  },
+
   rename: function (_id, name) {
     return this.updateOne({ _id }, { $set: { name: name} }).exec();
   },

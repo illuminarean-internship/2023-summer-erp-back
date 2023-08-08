@@ -15,10 +15,34 @@ const check = async (req, res, next) => {
   }
 };
 
+const updateAdmin = async (req, res, next) => {
+  try {
+    const { email, isAdmin } = req.body;
+    const user = await User.getByEmail(email);
+    if (!user) {
+      const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+      return next(err);
+    }
+    user.isAdmin = isAdmin;
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const adminList =  async (req, res, next) => {
+  try {
+    const users = await User.findByQuery(query);
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 const list = async (req, res, next) => {
   try {
-    const { limit = 50, skip = 0 } = req.query;
-    const users = await User.list({ limit, skip });
+    const users = await User.list();
 
     const userlist = await Promise.all(
       users.map(async (item) => {
@@ -214,5 +238,7 @@ export default {
   create,
   update,
   remove,
-  check
+  check,
+  adminList,
+  updateAdmin
 };

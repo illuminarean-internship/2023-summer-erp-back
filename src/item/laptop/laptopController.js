@@ -16,7 +16,7 @@ const list = async (req, res, next) => {
     let laptopList = await Promise.all(
         laptops.map(async (item) => {
           const { _id, category, model, CPU, RAM, SSD, serialNumber,currency, remarks, totalPrice, warranty, price, surtax,
-            illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+            illumiSerial, color, purchaseDate, purchasedFrom, purpose, userId, isUnreserved, isArchived,
             isRepair, archive, createAt, dateAvail, daysLeft } = item;
         const location = (await User.get(userId)).name;
         const history = archive.length !== 0 ? parseToObjectList(archive) : [{
@@ -26,7 +26,7 @@ const list = async (req, res, next) => {
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return { _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, location, warranty, price, surtax,
-          illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+          illumiSerial, color, purchaseDate, purchasedFrom, purpose, userId, isUnreserved, isArchived,
           isRepair, createAt, dateAvail, daysLeft, history };
       })
     );
@@ -44,7 +44,7 @@ const get = async (req, res, next) => {
     if (laptop) {
       const item = laptop;
       const { _id, category, model, CPU, RAM, SSD, serialNumber, currency, remarks, totalPrice, warranty, price, surtax,
-        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+        illumiSerial, color, purchaseDate, purchasedFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, archive, createAt, dateAvail, daysLeft } = item;
       const location = (await User.get(userId)).name;
       const history = archive.length !== 0 ? parseToObjectList(archive) : [{
@@ -54,7 +54,7 @@ const get = async (req, res, next) => {
         historyRemark: ''}];
       // Rearrange the keys, add the new key, and create a new object
       const laptopInfo= { _id, category, model, CPU, RAM, SSD, currency, remarks, totalPrice, serialNumber, location, warranty, price, surtax,
-        illumiSerial, color, purchaseDate, purchaseFrom, purpose, userId, isUnreserved, isArchived,
+        illumiSerial, color, purchaseDate, purchasedFrom, purpose, userId, isUnreserved, isArchived,
         isRepair, history, createAt, dateAvail, daysLeft };
       return res.json(laptopInfo); }
     const err = new APIError('No such laptop exists!', httpStatus.NOT_FOUND);
@@ -68,7 +68,7 @@ const create = async (req, res, next) => {
   try {
     const {
       category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, currency, remarks, totalPrice, location, history,
+      illumiSerial, color, purchaseDate, purchasedFrom, currency, remarks, totalPrice, location, history,
       dateAvail, daysLeft
     } = req.body;
     //Hidden problem!!same user name??? => should be replaced to userId
@@ -84,7 +84,7 @@ const create = async (req, res, next) => {
     //fill Laptopschema
     const userId = userObj._id;
     const laptop = new Laptop({ category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, currency, remarks, totalPrice, purchaseFrom, userId, dateAvail, daysLeft, history });
+      illumiSerial, color, purchaseDate, currency, remarks, totalPrice, purchasedFrom, userId, dateAvail, daysLeft, history });
     const {
       isUnreserved, isArchived, isRepair } = checkLocation(location);
     if (isUnreserved) laptop.isUnreserved = true;
@@ -107,7 +107,7 @@ const update = async (req, res, next) => {
   try {
     const { laptopId } = req.params;
     const { category, location, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
-      illumiSerial, color, purchaseDate, purchaseFrom, currency, remarks, totalPrice, history, dateAvail } = req.body;
+      illumiSerial, color, purchaseDate, purchasedFrom, currency, remarks, totalPrice, history, dateAvail } = req.body;
 
     //Hidden problem!!same user name??? => should be ID
     //validation : laptopId is valid? & location is valid?
@@ -130,7 +130,7 @@ const update = async (req, res, next) => {
     if(illumiSerial) laptop.illumiSerial=illumiSerial;
     if(color) laptop.color=color;
     if(purchaseDate) laptop.purchaseDate= purchaseDate;
-    if(purchaseFrom) laptop.purchaseFrom =purchaseFrom;
+    if(purchasedFrom) laptop.purchasedFrom =purchasedFrom;
     if(remarks) laptop.remarks =remarks;
     if(currency) laptop.currency =currency;
     if(totalPrice) laptop.totalPrice =totalPrice;

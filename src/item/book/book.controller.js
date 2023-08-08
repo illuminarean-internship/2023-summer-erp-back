@@ -18,7 +18,7 @@ const list = async (req, res, next) => {
       books.map(async (item) => {
         const {
           _id, name, purchaseDate, purchasedFrom, price, currency,
-          isUnreserved, isArchived, userId, log, createAt
+          resellPrice, resellCurrency, karrotPrice, isArchived, userId, log, createAt
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -32,7 +32,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, title, team, location, purchaseDate, purchasedFrom, price, currency,
-          isUnreserved, isArchived, userId, history, createAt
+          resellPrice, resellCurrency, karrotPrice, isArchived, userId, history, createAt
         };
       })
     );
@@ -51,7 +51,7 @@ const get = async (req, res, next) => {
     if (!book) { const err = new APIError('No such book exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, name, purchaseDate, purchasedFrom, price, currency,
-      isUnreserved, isArchived, userId, log, createAt
+      resellPrice, resellCurrency, karrotPrice, isArchived, userId, log, createAt
     } = book; // Destructure the original object
     
     const user = await User.get(userId);
@@ -67,7 +67,7 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const bookInfo = {
       _id, title, team, location, purchaseDate, purchasedFrom, price, currency,
-      isUnreserved, isArchived, userId, history, createAt
+      resellPrice, resellCurrency, karrotPrice, isArchived, userId, history, createAt
     };
     return res.json(bookInfo);
   } catch (err) {
@@ -79,7 +79,7 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      title, location, purchaseDate, purchasedFrom, price, history, currency
+      title, location, purchaseDate, purchasedFrom, price, history, currency, resellCurrency, resellPrice, karrotPrice
     } = req.body;
 
     // find the team is existing
@@ -96,9 +96,13 @@ const create = async (req, res, next) => {
     const book = new Book({
       name, purchaseDate, purchasedFrom, price, userId, currency
     });
-    const { isUnreserved, isArchived } = checkLocation(location);
-    book.isUnreserved = isUnreserved;
+    const { isArchived } = checkLocation(location);
     book.isArchived = isArchived;
+    if (isArchived) {
+      book.resellPrice = resellPrice;
+      book.resellCurrency = resellCurrency;
+      book.karrotPrice = karrotPrice;
+    }
     if (history) book.log = parseToStringList(history);
     const savedBook = await book.save();
 
@@ -115,7 +119,7 @@ const update = async (req, res, next) => {
   try {
     const { bookId } = req.params;
     const {
-      title, location, purchaseDate, purchasedFrom, price, history, currency
+      title, location, purchaseDate, purchasedFrom, price, history, currency, resellCurrency, resellPrice, karrotPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -136,9 +140,13 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(book.userId)) {
       // update user schema
-      const { isUnreserved, isArchived } = checkLocation(location);
-      book.isUnreserved = isUnreserved;
+      const { isArchived } = checkLocation(location);
       book.isArchived = isArchived;
+      if (isArchived) {
+        book.resellPrice = resellPrice;
+        book.resellCurrency = resellCurrency;
+        book.karrotPrice = karrotPrice;
+      }
 
       const userObj = await User.get(book.userId);
       userObj.numOfAssets -= 1;

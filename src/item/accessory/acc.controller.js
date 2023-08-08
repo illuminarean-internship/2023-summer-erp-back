@@ -15,7 +15,9 @@ const list = async (req, res, next) => {
       accs.map(async (item) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-          isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks
+          isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks,
+          isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+          karrotPrice
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -27,8 +29,9 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
-          purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-          history, dateAvail, daysLeft, remarks
+          purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice,
+          history, dateAvail, daysLeft, remarks, isRepair, issues, replace, request, repairPrice,
+          repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
         };
       })
     );
@@ -46,7 +49,9 @@ const get = async (req, res, next) => {
     if (!acc) { const err = new APIError('No such acc exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency,
-      isUnreserved, isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks
+      isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
     } = acc; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -58,8 +63,9 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const accInfo = {
       _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency,
-      purchasedFrom, isUnreserved, isArchived, userId, createAt, price, surtax, totalPrice,
-      history, dateAvail, daysLeft, remarks
+      purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice,
+      history, dateAvail, daysLeft, remarks, isRepair, issues, replace, request,
+      repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     };
     return res.json(accInfo);
   } catch (err) {
@@ -72,7 +78,9 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks
+      history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
     } = req.body;
 
     // find the team is existing
@@ -87,11 +95,22 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const acc = new Acc({
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks
+      history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks, karrotPrice
     });
-    const { isUnreserved, isArchived } = checkLocation(location);
-    acc.isUnreserved = isUnreserved;
+    const { isArchived } = checkLocation(location);
     acc.isArchived = isArchived;
+    acc.isRepair = isRepair;
+    if (isArchived || isRepair) {
+      acc.issues = issues;
+      acc.replace = replace;
+      acc.repairPrice = repairPrice;
+      acc.repairCurrency = repairCurrency;
+      acc.repairDetails = repairDetails;
+      acc.request = request;
+      acc.resellPrice = resellPrice;
+      acc.resellCurrency = resellCurrency;
+      acc.karrotPrice = karrotPrice;
+    }
     if (history) acc.log = parseToStringList(history);
     const savedacc = await acc.save();
 
@@ -109,7 +128,9 @@ const update = async (req, res, next) => {
     const { accId } = req.params;
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks
+      history, price, surtax, totalPrice, location, dateAvail, remarks,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -129,7 +150,7 @@ const update = async (req, res, next) => {
     if (price) acc.price = price;
     if (color) acc.color = color;
     if (remarks) acc.remarks = remarks;
-    if (currency) acc.currency  = currency;
+    if (currency) acc.currency = currency;
     if (surtax) acc.surtax = surtax;
     if (purchasedFrom) acc.purchasedFrom = purchasedFrom;
     if (totalPrice) acc.totalPrice = totalPrice;
@@ -139,9 +160,20 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(acc.userId)) {
       // update user schema
-      const { isUnreserved, isArchived } = checkLocation(location);
-      acc.isUnreserved = isUnreserved;
+      const { isArchived } = checkLocation(location);
       acc.isArchived = isArchived;
+      if (isRepair) acc.isRepair = isRepair;
+      if (isArchived || acc.isRepair) {
+        if (issues) acc.issues = issues;
+        if (replace) acc.replace = replace;
+        if (repairPrice) acc.repairPrice = repairPrice;
+        if (repairCurrency) acc.repairCurrency = repairCurrency;
+        if (repairDetails) acc.repairDetails = repairDetails;
+        if (request) acc.request = request;
+        if (resellPrice) acc.resellPrice = resellPrice;
+        if (resellCurrency) acc.resellCurrency = resellCurrency;
+        if (karrotPrice) acc.karrotPrice = karrotPrice;
+      }
 
       const userObj = await User.get(acc.userId);
       userObj.numOfAssets -= 1;

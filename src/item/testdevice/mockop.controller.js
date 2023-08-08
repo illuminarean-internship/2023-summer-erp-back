@@ -17,7 +17,9 @@ const list = async (req, res, next) => {
       mockups.map(async (item) => {
         const {
           _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-          remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice, currency
+          remarks, isArchived, userId, log, createAt, totalPrice, currency,
+          isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+          resellPrice, resellCurrency, karrotPrice
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -30,7 +32,8 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
-          purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice, currency
+          purchasedFrom, remarks, isRepair, isArchived, userId, history, createAt, totalPrice, currency,
+          issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
         };
       })
     );
@@ -49,7 +52,8 @@ const get = async (req, res, next) => {
     if (!mockup) { const err = new APIError('No such mockup exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, isUnreserved, isArchived, userId, log, createAt, totalPrice, currency 
+      remarks, isRepair, isArchived, userId, log, createAt, totalPrice, currency,
+      issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = mockup; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -62,8 +66,9 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const MockupInfo = {
       _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
-      purchasedFrom, remarks, isUnreserved, isArchived, userId, history, createAt, totalPrice,
-      currency
+      purchasedFrom, remarks, isRepair, isArchived, userId, history, createAt, totalPrice,
+      currency, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, 
+      karrotPrice
     };
     return res.json(MockupInfo);
   } catch (err) {
@@ -76,7 +81,9 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, history, location, totalPrice, currency
+      remarks, history, location, totalPrice, currency,
+      isRepair, issues, replace, request, repairPrice,
+      repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = req.body;
 
     // find the team is existing
@@ -93,9 +100,20 @@ const create = async (req, res, next) => {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
       remarks, userId, totalPrice, currency
     });
-    const { isUnreserved, isArchived } = checkLocation(location);
-    mockup.isUnreserved = isUnreserved;
+    const { isArchived } = checkLocation(location);
     mockup.isArchived = isArchived;
+    mockup.isRepair = isRepair;
+    if (isArchived || isRepair) {
+      mockup.issues = issues;
+      mockup.replace = replace;
+      mockup.repairPrice = repairPrice;
+      mockup.repairCurrency = repairCurrency;
+      mockup.repairDetails = repairDetails;
+      mockup.request = request;
+      mockup.resellPrice = resellPrice;
+      mockup.resellCurrency = resellCurrency;
+      mockup.karrotPrice= karrotPrice;
+    }
     if (history) mockup.log = parseToStringList(history);
     const savedMockup = await mockup.save();
 
@@ -113,7 +131,8 @@ const update = async (req, res, next) => {
     const { mockupId } = req.params;
     const {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, history, location, totalPrice, currency
+      remarks, history, location, totalPrice, currency, isRepair, issues, replace, request, repairPrice,
+      repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -140,9 +159,20 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(mockup.userId)) {
       // update user schema
-      const { isUnreserved, isArchived } = checkLocation(location);
-      mockup.isUnreserved = isUnreserved;
+      const { isArchived } = checkLocation(location);
       mockup.isArchived = isArchived;
+      if (isRepair) mockup.isRepair = isRepair;
+      if (isArchived || mockup.isRepair) {
+        if (issues) mockup.issues = issues;
+        if (replace) mockup.replace = replace;
+        if (repairPrice) mockup.repairPrice = repairPrice;
+        if (repairCurrency) mockup.repairCurrency = repairCurrency;
+        if (repairDetails) mockup.repairDetails = repairDetails;
+        if (request) mockup.request = request;
+        if (resellPrice) mockup.resellPrice = resellPrice;
+        if (karrotPrice) mockup.karrotPrice = karrotPrice;
+        if (resellCurrency) mockup.resellCurrency = resellCurrency;
+      }
 
       const userObj = await User.get(mockup.userId);
       userObj.numOfAssets -= 1;

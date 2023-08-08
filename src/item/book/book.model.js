@@ -25,13 +25,18 @@ const BookSchema = new mongoose.Schema({
     default: '￦'
   },
   // Additional info,
-  isUnreserved: {
-    type: Boolean,
-    default: false
-  },
   isArchived: {
     type: Boolean,
     default: false
+  },
+  resellPrice: {
+    type: Number
+  },
+  resellCurrency: {
+    type: String
+  },
+  karrotPrice: {
+    type: Number
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

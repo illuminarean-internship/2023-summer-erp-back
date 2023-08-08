@@ -14,8 +14,10 @@ const list = async (req, res, next) => {
     let desktopList = await Promise.all(
       desktops.map(async (item) => {
         const {
-          _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-          details, userId, log, createAt, totalPrice, remarks
+          _id, illumiSerial, purchaseDate, purchasedFrom, isArchived, purpose,
+          details, userId, log, createAt, totalPrice, remarks,
+          isRepair, issues, replace, request, repairPrice, repairCurrency,
+          repairDetails, resellPrice, resellCurrency, karrotPrice
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -26,8 +28,10 @@ const list = async (req, res, next) => {
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-          location, details, userId, history, createAt, totalPrice, remarks
+          _id, illumiSerial, purchaseDate, purchasedFrom, isArchived, purpose,
+          location, details, userId, history, createAt, totalPrice, remarks,
+          isRepair, issues, replace, request, repairPrice, repairCurrency,
+          repairDetails, resellPrice, resellCurrency, karrotPrice
         };
       })
     );
@@ -45,7 +49,8 @@ const get = async (req, res, next) => {
     if (!desktop) { const err = new APIError('No such desktop exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-      details, userId, log, createAt, totalPrice, remarks
+      details, userId, log, createAt, totalPrice, remarks, isRepair, issues, replace, request, repairPrice,
+      repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = desktop; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -57,7 +62,8 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const desktopInfo = {
       _id, illumiSerial, purchaseDate, purchasedFrom, isUnreserved, isArchived, purpose,
-      location, details, userId, history, createAt, totalPrice, remarks
+      location, details, userId, history, createAt, totalPrice, remarks,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     };
     return res.json(desktopInfo);
   } catch (err) {
@@ -69,7 +75,8 @@ const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
-      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history, remarks, totalPrice
+      illumiSerial, purchaseDate, purchasedFrom, purpose, location, details, history, remarks, totalPrice,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = req.body;
 
     // find the team is existing
@@ -84,9 +91,20 @@ const create = async (req, res, next) => {
     const desktop = new Desktop({
       illumiSerial, purchaseDate, purchasedFrom, purpose, details, userId, totalPrice, remarks
     });
-    const { isUnreserved, isArchived } = checkLocation(location);
-    desktop.isUnreserved = isUnreserved;
+    const { isArchived } = checkLocation(location);
     desktop.isArchived = isArchived;
+    desktop.isRepair = isRepair;
+    if (isArchived || isRepair) {
+      desktop.issues = issues;
+      desktop.replace = replace;
+      desktop.repairPrice = repairPrice;
+      desktop.repairCurrency = repairCurrency;
+      desktop.repairDetails = repairDetails;
+      desktop.request = request;
+      desktop.resellPrice = resellPrice;
+      desktop.karrotPrice = karrotPrice;
+      desktop.resellCurrency = resellCurrency;
+    }
     if (history) desktop.log = parseToStringList(history);
     const savedDesktop = await desktop.save();
 
@@ -103,7 +121,8 @@ const update = async (req, res, next) => {
   try {
     const { desktopId } = req.params;
     const {
-      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details, remarks, totalPrice
+      illumiSerial, location, purpose, purchaseDate, purchasedFrom, history, details, remarks, totalPrice,
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -128,9 +147,20 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(desktop.userId)) {
       // update user schema
-      const { isUnreserved, isArchived } = checkLocation(location);
-      desktop.isUnreserved = isUnreserved;
+      const { isArchived } = checkLocation(location);
       desktop.isArchived = isArchived;
+      if (isRepair) desktop.isRepair = isRepair;
+      if (isArchived || desktop.isRepair) {
+        desktop.issues = issues;
+        desktop.replace = replace;
+        desktop.repairPrice = repairPrice;
+        desktop.repairCurrency = repairCurrency;
+        desktop.repairDetails = repairDetails;
+        desktop.request = request;
+        desktop.resellPrice = resellPrice;
+        desktop.karrotPrice = karrotPrice;
+        desktop.resellCurrency = resellCurrency;
+      }
 
       const userObj = await User.get(desktop.userId);
       userObj.numOfAssets -= 1;

@@ -106,6 +106,9 @@ const AccSchema = new mongoose.Schema({
   },
   resellCurrency: {
     type: String
+  },
+  karrotPrice: {
+    type: Number
   }
 });
 

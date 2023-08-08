@@ -48,13 +48,40 @@ const MockupSchema = new mongoose.Schema({
     required: false
   },
   // Additional info,
-  isUnreserved: {
+  isRepair: {
     type: Boolean,
     default: false
   },
   isArchived: {
     type: Boolean,
     default: false
+  },
+  issues: {
+    type: [String]
+  },
+  replace: {
+    type: String
+  },
+  request: {
+    type: String
+  },
+  repairPrice: {
+    type: Number
+  },
+  repairCurrency: {
+    type: String
+  },
+  repairDetails: {
+    type: String
+  },
+  resellPrice: {
+    type: Number
+  },
+  resellCurrency: {
+    type: String
+  },
+  karrotPrice: {
+    type: Number
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

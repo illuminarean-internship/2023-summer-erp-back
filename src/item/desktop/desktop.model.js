@@ -35,9 +35,36 @@ const DesktopSchema = new mongoose.Schema({
     ref: 'User',
     required: false
   },
-  isUnreserved: {
+  isRepair: {
     type: Boolean,
     default: false
+  },
+  issues: {
+    type: [String]
+  },
+  replace: {
+    type: String
+  },
+  request: {
+    type: String
+  },
+  repairPrice: {
+    type: Number
+  },
+  repairCurrency: {
+    type: String
+  },
+  repairDetails: {
+    type: String
+  },
+  resellPrice: {
+    type: Number
+  },
+  resellCurrency: {
+    type: String
+  },
+  karrotPrice: {
+    type: Number
   },
   isArchived: {
     type: Boolean,

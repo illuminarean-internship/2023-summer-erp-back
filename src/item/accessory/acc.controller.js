@@ -16,7 +16,8 @@ const list = async (req, res, next) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
           isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks,
-          isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency
+          isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+          karrotPrice
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -30,7 +31,7 @@ const list = async (req, res, next) => {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
           purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice,
           history, dateAvail, daysLeft, remarks, isRepair, issues, replace, request, repairPrice,
-          repairCurrency, repairDetails, resellPrice, resellCurrency
+          repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
         };
       })
     );
@@ -49,7 +50,8 @@ const get = async (req, res, next) => {
     const {
       _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom, currency,
       isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks,
-      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
     } = acc; // Destructure the original object
     const user = await User.get(userId);
     const location = user.name;
@@ -63,7 +65,7 @@ const get = async (req, res, next) => {
       _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate, currency,
       purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice,
       history, dateAvail, daysLeft, remarks, isRepair, issues, replace, request,
-      repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency
+      repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     };
     return res.json(accInfo);
   } catch (err) {
@@ -77,7 +79,8 @@ const create = async (req, res, next) => {
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
       history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks,
-      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
     } = req.body;
 
     // find the team is existing
@@ -92,7 +95,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const acc = new Acc({
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
-      history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks
+      history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks, karrotPrice
     });
     const { isArchived } = checkLocation(location);
     acc.isArchived = isArchived;
@@ -106,6 +109,7 @@ const create = async (req, res, next) => {
       acc.request = request;
       acc.resellPrice = resellPrice;
       acc.resellCurrency = resellCurrency;
+      acc.karrotPrice = karrotPrice;
     }
     if (history) acc.log = parseToStringList(history);
     const savedacc = await acc.save();
@@ -125,7 +129,8 @@ const update = async (req, res, next) => {
     const {
       model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
       history, price, surtax, totalPrice, location, dateAvail, remarks,
-      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency
+      isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+      karrotPrice
       // isLogged , endDate, startDate, locationRemarks
     } = req.body;
 
@@ -167,6 +172,7 @@ const update = async (req, res, next) => {
         if (request) acc.request = request;
         if (resellPrice) acc.resellPrice = resellPrice;
         if (resellCurrency) acc.resellCurrency = resellCurrency;
+        if (karrotPrice) acc.karrotPrice = karrotPrice;
       }
 
       const userObj = await User.get(acc.userId);

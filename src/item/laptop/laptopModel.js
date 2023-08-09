@@ -9,7 +9,8 @@ const laptopSchema = new mongoose.Schema({
   }, */
   category: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   model: {
     type: String,
@@ -17,15 +18,18 @@ const laptopSchema = new mongoose.Schema({
   },
   CPU: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   RAM: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   SSD: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   currency: {
     type: String,
@@ -34,6 +38,7 @@ const laptopSchema = new mongoose.Schema({
   serialNumber: {
     type: String,
     required: false
+    default: ''
   },
   userId: { // location
     type: mongoose.Schema.Types.ObjectId,
@@ -57,6 +62,7 @@ const laptopSchema = new mongoose.Schema({
   color: {
     type: String,
     required: false
+    default: ''
   },
   purchaseDate: {
     type: Date,

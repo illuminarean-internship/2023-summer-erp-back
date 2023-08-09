@@ -73,6 +73,60 @@ const get = async (req, res, next) => {
   }
 };
 
+
+const createList = async (req, res, next) => {
+  try {
+    const bodylist = req.body;
+    for( let i =0 ; i<bodylist.length; i++){
+      const item = bodylist[i];
+      const {
+        model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
+        history, price, surtax, totalPrice, location, dateAvail, daysLeft, remarks,
+        isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
+        karrotPrice
+      } = item;
+  
+      // find the team is existing
+      const userObj = await User.getByName(location);
+      if (!userObj) {
+        const errorMessage = `The location ${location} is not existing!`;
+        // if not, return error
+        return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
+      }
+  
+      // fill accschema
+      const userId = userObj._id;
+      const acc = new Acc({
+        model, category, illuSerialNumber, serialNumber, color, currency, purchaseDate, purchasedFrom,
+        history, price, surtax, totalPrice, userId, dateAvail, daysLeft, remarks, karrotPrice
+      });
+      const { isArchived } = checkLocation(location);
+      acc.isArchived = isArchived;
+      acc.isRepair = isRepair;
+      if (isArchived || isRepair) {
+        acc.issues = issues;
+        acc.replace = replace;
+        acc.repairPrice = repairPrice;
+        acc.repairCurrency = repairCurrency;
+        acc.repairDetails = repairDetails;
+        acc.request = request;
+        acc.resellPrice = resellPrice;
+        acc.resellCurrency = resellCurrency;
+        acc.karrotPrice = karrotPrice;
+      }
+      if (history) acc.log = parseToStringList(history);
+      const savedacc = await acc.save();
+  
+      // update item list of user
+      userObj.numOfAssets += 1;
+      await userObj.save();
+    }
+    res.json("done");
+} catch (err) {
+    return next(err);
+  }
+};
+
 const create = async (req, res, next) => {
   try {
     // Hidden problem!!same user name??? => should be replaced to userId
@@ -213,5 +267,6 @@ export default {
   get,
   create,
   update,
-  remove
+  remove,
+  createList
 };

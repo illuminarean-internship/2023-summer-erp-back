@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
       accs.map(async (item) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-          isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks, currency
+          isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks, currency,
           isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
           karrotPrice
         } = item;

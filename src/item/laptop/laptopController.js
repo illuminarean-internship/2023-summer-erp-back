@@ -198,6 +198,7 @@ const createList = async (req, res, next) => {
       userObj.numOfAssets += 1;
       await userObj.save();
     }
+    res.json("done");
 } catch (err) {
     return next(err);
   }

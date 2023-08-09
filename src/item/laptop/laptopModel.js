@@ -45,12 +45,10 @@ const laptopSchema = new mongoose.Schema({
     required: false
   },
   price: {
-    type: Number,
-    default: 0
+    type: Number
   },
   surtax: {
-    type: Number,
-    default: 0
+    type: Number
   },
   illumiSerial: {
     type: String,
@@ -74,7 +72,7 @@ const laptopSchema = new mongoose.Schema({
   },
   totalPrice: {
     type: Number,
-    required: false
+    default: 0
   },
   issues: {
     type: [String]

@@ -5,15 +5,15 @@ import mongoose from 'mongoose';
 const laptopSchema = new mongoose.Schema({
 /* deviceImage:{
     type: String,
-    required: true
+    required: false
   }, */
   category: {
     type: String,
-    required: true
+    required: false
   },
   model: {
     type: String,
-    required: true
+    required: false
   },
   CPU: {
     type: String,
@@ -33,7 +33,7 @@ const laptopSchema = new mongoose.Schema({
   },
   serialNumber: {
     type: String,
-    required: true
+    required: false
   },
   userId: { // location
     type: mongoose.Schema.Types.ObjectId,
@@ -46,11 +46,11 @@ const laptopSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: true
+    required: false
   },
   surtax: {
     type: Number,
-    required: true
+    required: false
   },
   illumiSerial: {
     type: String,
@@ -62,11 +62,11 @@ const laptopSchema = new mongoose.Schema({
   },
   purchaseDate: {
     type: Date,
-    required: true
+    required: false
   },
   purchasedFrom: {
     type: String,
-    required: true
+    required: false
   },
   remarks: {
     type: String,

@@ -24,6 +24,7 @@ const updateAdmin = async (req, res, next) => {
       return next(err);
     }
     user.isAdmin = isAdmin;
+    await user.save();
     res.json(user);
   } catch (err) {
     next(err);

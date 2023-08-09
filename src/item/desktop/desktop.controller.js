@@ -134,32 +134,32 @@ const update = async (req, res, next) => {
     if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (illumiSerial) desktop.illumiSerial = illumiSerial;
-    if (purpose) desktop.purpose = purpose;
-    if (totalPrice) desktop.totalPrice = totalPrice;
-    if (remarks) desktop.remarks = remarks;
-    if (details) {
+    if (illumiSerial !== undefined) desktop.illumiSerial = illumiSerial;
+    if (purpose !== undefined) desktop.purpose = purpose;
+    if (totalPrice !== undefined) desktop.totalPrice = totalPrice;
+    if (remarks !== undefined) desktop.remarks = remarks;
+    if (details !== undefined) {
       desktop.details = details;
     }
-    if (purchaseDate) desktop.purchasedDate = purchaseDate; 
-    if (purchasedFrom) desktop.purchaseFrom = purchasedFrom;
+    if (purchaseDate !== undefined) desktop.purchasedDate = purchaseDate; 
+    if (purchasedFrom !== undefined) desktop.purchaseFrom = purchasedFrom;
 
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(desktop.userId)) {
       // update user schema
       const { isArchived } = checkLocation(location);
       desktop.isArchived = isArchived;
-      if (isRepair) desktop.isRepair = isRepair;
+      if (isRepair !== undefined) desktop.isRepair = isRepair;
       if (isArchived || desktop.isRepair) {
-        desktop.issues = issues;
-        desktop.replace = replace;
-        desktop.repairPrice = repairPrice;
-        desktop.repairCurrency = repairCurrency;
-        desktop.repairDetails = repairDetails;
-        desktop.request = request;
-        desktop.resellPrice = resellPrice;
-        desktop.karrotPrice = karrotPrice;
-        desktop.resellCurrency = resellCurrency;
+        if (issues !== undefined) desktop.issues = issues;
+        if (replace !== undefined) desktop.replace = replace;
+        if (repairPrice !== undefined) desktop.repairPrice = repairPrice;
+        if (repairCurrency !== undefined) desktop.repairCurrency = repairCurrency;
+        if (repairDetails !== undefined) desktop.repairDetails = repairDetails;
+        if (request !== undefined) desktop.request = request;
+        if (resellPrice !== undefined) desktop.resellPrice = resellPrice;
+        if (karrotPrice !== undefined) desktop.karrotPrice = karrotPrice;
+        if (resellCurrency !== undefined) desktop.resellCurrency = resellCurrency;
       }
 
       const userObj = await User.get(desktop.userId);

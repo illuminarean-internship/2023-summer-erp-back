@@ -119,14 +119,14 @@ const update = async (req, res, next) => {
     if (user && !validation) return next(new APIError(`there is no user named ${user}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (name) sw.name = name;
-    if (purchaseDate) sw.purchaseDate = purchaseDate;
-    if (unitPrice) sw.unitPrice = unitPrice;
-    if (quantity) sw.quantity = quantity;
-    if (totalPrice) sw.totalPrice = totalPrice;
-    if (reference) sw.reference = reference;
-    if (remarks) sw.remarks = remarks;
-    if (currency) sw.currency = currency;
+    if (name !== undefined) sw.name = name;
+    if (purchaseDate !== undefined) sw.purchaseDate = purchaseDate;
+    if (unitPrice !== undefined) sw.unitPrice = unitPrice;
+    if (quantity !== undefined) sw.quantity = quantity;
+    if (totalPrice !== undefined) sw.totalPrice = totalPrice;
+    if (reference !== undefined) sw.reference = reference;
+    if (remarks !== undefined) sw.remarks = remarks;
+    if (currency !== undefined) sw.currency = currency;
 
     // if location changed-> update user schema and logg
     if (user && !validation._id.equals(sw.userId)) {

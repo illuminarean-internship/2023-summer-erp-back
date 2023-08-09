@@ -196,19 +196,19 @@ const update = async (req, res, next) => {
     if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (model) acc.model = model;
-    if (category) acc.category = category;
-    if (illuSerialNumber) acc.illuSerialNumber = illuSerialNumber;
-    if (purchaseDate) acc.purchaseDate = purchaseDate;
-    if (serialNumber) acc.serialNumber = serialNumber;
-    if (price) acc.price = price;
-    if (color) acc.color = color;
-    if (remarks) acc.remarks = remarks;
-    if (currency) acc.currency = currency;
-    if (surtax) acc.surtax = surtax;
-    if (purchasedFrom) acc.purchasedFrom = purchasedFrom;
-    if (totalPrice) acc.totalPrice = totalPrice;
-    if (dateAvail) acc.dateAvail =dateAvail;
+    if (model !== undefined ) acc.model = model;
+    if (category !== undefined ) acc.category = category;
+    if (illuSerialNumber !== undefined) acc.illuSerialNumber = illuSerialNumber;
+    if (purchaseDate !== undefined) acc.purchaseDate = purchaseDate;
+    if (serialNumber !== undefined) acc.serialNumber = serialNumber;
+    if (price !== undefined) acc.price = price;
+    if (color !== undefined) acc.color = color;
+    if (remarks !== undefined) acc.remarks = remarks;
+    if (currency !== undefined) acc.currency = currency;
+    if (surtax !== undefined) acc.surtax = surtax;
+    if (purchasedFrom !== undefined) acc.purchasedFrom = purchasedFrom;
+    if (totalPrice !== undefined) acc.totalPrice = totalPrice;
+    if (dateAvail !== undefined) acc.dateAvail =dateAvail;
 
 
     // if location changed-> update user schema and logg
@@ -216,17 +216,17 @@ const update = async (req, res, next) => {
       // update user schema
       const { isArchived } = checkLocation(location);
       acc.isArchived = isArchived;
-      if (isRepair) acc.isRepair = isRepair;
+      if (isRepair !== undefined) acc.isRepair = isRepair;
       if (isArchived || acc.isRepair) {
-        if (issues) acc.issues = issues;
-        if (replace) acc.replace = replace;
-        if (repairPrice) acc.repairPrice = repairPrice;
-        if (repairCurrency) acc.repairCurrency = repairCurrency;
-        if (repairDetails) acc.repairDetails = repairDetails;
-        if (request) acc.request = request;
-        if (resellPrice) acc.resellPrice = resellPrice;
-        if (resellCurrency) acc.resellCurrency = resellCurrency;
-        if (karrotPrice) acc.karrotPrice = karrotPrice;
+        if (issues !== undefined) acc.issues = issues;
+        if (replace !== undefined) acc.replace = replace;
+        if (repairPrice !== undefined) acc.repairPrice = repairPrice;
+        if (repairCurrency !== undefined) acc.repairCurrency = repairCurrency;
+        if (repairDetails !== undefined) acc.repairDetails = repairDetails;
+        if (request !== undefined) acc.request = request;
+        if (resellPrice !== undefined) acc.resellPrice = resellPrice;
+        if (resellCurrency !== undefined) acc.resellCurrency = resellCurrency;
+        if (karrotPrice !== undefined) acc.karrotPrice = karrotPrice;
       }
 
       const userObj = await User.get(acc.userId);

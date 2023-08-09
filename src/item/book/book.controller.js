@@ -131,10 +131,10 @@ const update = async (req, res, next) => {
     if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (title) book.name = title;
-    if (purchaseDate) book.purchaseDate = purchaseDate;
-    if (purchasedFrom) book.purchasedFrom = purchasedFrom;
-    if (price) book.price = price;
+    if (title !== undefined) book.name = title;
+    if (purchaseDate !== undefined) book.purchaseDate = purchaseDate;
+    if (purchasedFrom !==undefined ) book.purchasedFrom = purchasedFrom;
+    if (price !==undefined ) book.price = price;
     if (currency!==undefined) book.currency = currency;
 
     // if location changed-> update user schema and logg
@@ -143,9 +143,9 @@ const update = async (req, res, next) => {
       const { isArchived } = checkLocation(location);
       book.isArchived = isArchived;
       if (isArchived) {
-        book.resellPrice = resellPrice;
-        book.resellCurrency = resellCurrency;
-        book.karrotPrice = karrotPrice;
+        if (resellPrice !== undefined) book.resellPrice = resellPrice;
+        if (resellCurrency !== undefined) book.resellCurrency = resellCurrency;
+        if (karrotPrice !== undefined) book.karrotPrice = karrotPrice;
       }
 
       const userObj = await User.get(book.userId);
@@ -175,7 +175,7 @@ const update = async (req, res, next) => {
       }
       */
     }
-    if (history) { book.log = parseToStringList(history); }
+    if (history !== undefined) { book.log = parseToStringList(history); }
     const bookSaved = await book.save();
     return res.json(bookSaved);
   } catch (err) {

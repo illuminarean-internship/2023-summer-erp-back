@@ -144,34 +144,34 @@ const update = async (req, res, next) => {
     if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (model) mockup.model = model;
-    if (category) mockup.category = category;
-    if (RAM) mockup.RAM = RAM;
-    if (memory) mockup.memory = memory;
-    if (serialNumber) mockup.serialNumber = serialNumber;
-    if (currency) mockup.currency = currency;
-    if (condition) mockup.condition = condition;
-    if (color) mockup.color = color;
-    if (remarks) mockup.remarks = remarks;
-    if (purchasedFrom) mockup.purchasedFrom = purchasedFrom;
-    if (totalPrice) mockup.totalPrice = totalPrice;
+    if (model !== undefined) mockup.model = model;
+    if (category !== undefined) mockup.category = category;
+    if (RAM !== undefined) mockup.RAM = RAM;
+    if (memory !== undefined) mockup.memory = memory;
+    if (serialNumber !== undefined) mockup.serialNumber = serialNumber;
+    if (currency !== undefined) mockup.currency = currency;
+    if (condition !== undefined) mockup.condition = condition;
+    if (color !== undefined) mockup.color = color;
+    if (remarks !== undefined) mockup.remarks = remarks;
+    if (purchasedFrom !== undefined) mockup.purchasedFrom = purchasedFrom;
+    if (totalPrice !== undefined) mockup.totalPrice = totalPrice;
 
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(mockup.userId)) {
       // update user schema
       const { isArchived } = checkLocation(location);
       mockup.isArchived = isArchived;
-      if (isRepair) mockup.isRepair = isRepair;
+      if (isRepair !== undefined) mockup.isRepair = isRepair;
       if (isArchived || mockup.isRepair) {
-        if (issues) mockup.issues = issues;
-        if (replace) mockup.replace = replace;
-        if (repairPrice) mockup.repairPrice = repairPrice;
-        if (repairCurrency) mockup.repairCurrency = repairCurrency;
-        if (repairDetails) mockup.repairDetails = repairDetails;
-        if (request) mockup.request = request;
-        if (resellPrice) mockup.resellPrice = resellPrice;
-        if (karrotPrice) mockup.karrotPrice = karrotPrice;
-        if (resellCurrency) mockup.resellCurrency = resellCurrency;
+        if (issues !== undefined) mockup.issues = issues;
+        if (replace !== undefined) mockup.replace = replace;
+        if (repairPrice !== undefined) mockup.repairPrice = repairPrice;
+        if (repairCurrency !== undefined) mockup.repairCurrency = repairCurrency;
+        if (repairDetails !== undefined) mockup.repairDetails = repairDetails;
+        if (request !== undefined) mockup.request = request;
+        if (resellPrice !== undefined) mockup.resellPrice = resellPrice;
+        if (karrotPrice !== undefined) mockup.karrotPrice = karrotPrice;
+        if (resellCurrency !== undefined) mockup.resellCurrency = resellCurrency;
       }
 
       const userObj = await User.get(mockup.userId);

@@ -23,7 +23,7 @@ const updateAdmin = async (req, res, next) => {
       const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
       return next(err);
     }
-    user.isAdmin = isAdmin;
+    if (isAdmin !== undefined) user.isAdmin = isAdmin;
     await user.save();
     res.json(user);
   } catch (err) {
@@ -168,11 +168,11 @@ const update = async (req, res, next) => {
       return projObj._id;
     }));
 
-    if (name) user.name = name;
-    if (field) user.field = field;
-    if (remarks) user.remarks = remarks;
-    if (isAdmin) user.isAdmin = isAdmin;
-    if (email) user.email = email;
+    if (name !== undefined ) user.name = name;
+    if (field!== undefined ) user.field = field;
+    if (remarks!== undefined ) user.remarks = remarks;
+    if (isAdmin!== undefined ) user.isAdmin = isAdmin;
+    if (email!== undefined ) user.email = email;
     if (team && teamNewObj._id !== user.teamId) {
       const teamObj = await Team.get(user.teamId);
       teamObj.numOfMembers -= 1;
@@ -182,7 +182,7 @@ const update = async (req, res, next) => {
       await teamNewObj.save();
       user.teamId = teamNewObj._id;
     }
-    if (project) {
+    if (project !== undefined ) {
       await Promise.all(user.projectIdList.map(async (projectId) => {
         const projObj = await Project.get(projectId);
         projObj.numOfMembers -= 1;

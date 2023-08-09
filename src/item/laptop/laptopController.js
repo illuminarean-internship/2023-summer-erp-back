@@ -292,41 +292,41 @@ const update = async (req, res, next) => {
     if (location && !validation) return next(new APIError(`there is no user named ${location}`, httpStatus.NOT_ACCEPTABLE));
 
     // if contents changed-> just updated
-    if (category) laptop.category = category;
-    if (model) laptop.model = model;
-    if (CPU) laptop.CPU = CPU;
-    if (RAM) laptop.RAM = RAM;
-    if (SSD) laptop.SSD = SSD;
-    if (serialNumber) laptop.serialNumber = serialNumber;
-    if (warranty) laptop.warranty = warranty;
-    if (price) laptop.price = price;
-    if (surtax) laptop.surtax = surtax;
-    if (warranty) laptop.surtax = surtax;
-    if (illumiSerial) laptop.illumiSerial = illumiSerial;
-    if (color) laptop.color = color;
-    if (purchaseDate) laptop.purchaseDate = purchaseDate;
-    if (purchasedFrom) laptop.purchasedFrom = purchasedFrom;
-    if (remarks) laptop.remarks = remarks;
-    if (currency) laptop.currency = currency;
-    if (totalPrice) laptop.totalPrice = totalPrice;
-    if (dateAvail) laptop.dateAvail = dateAvail;
+    if (category !== undefined) laptop.category = category;
+    if (model !== undefined) laptop.model = model;
+    if (CPU !== undefined) laptop.CPU = CPU;
+    if (RAM !== undefined) laptop.RAM = RAM;
+    if (SSD !== undefined) laptop.SSD = SSD;
+    if (serialNumber !== undefined) laptop.serialNumber = serialNumber;
+    if (warranty !== undefined) laptop.warranty = warranty;
+    if (price !== undefined) laptop.price = price;
+    if (surtax !== undefined) laptop.surtax = surtax;
+    if (warranty !== undefined) laptop.surtax = surtax;
+    if (illumiSerial !== undefined) laptop.illumiSerial = illumiSerial;
+    if (color !== undefined) laptop.color = color;
+    if (purchaseDate !== undefined) laptop.purchaseDate = purchaseDate;
+    if (purchasedFrom !== undefined) laptop.purchasedFrom = purchasedFrom;
+    if (remarks !== undefined) laptop.remarks = remarks;
+    if (currency !== undefined) laptop.currency = currency;
+    if (totalPrice !== undefined) laptop.totalPrice = totalPrice;
+    if (dateAvail !== undefined) laptop.dateAvail = dateAvail;
 
     // if location changed-> update user schema and archive
     if (location && !validation._id.equals(laptop.userId)) {
       // update user schema
       const { isArchived } = checkLocation(location);
       laptop.isArchived = isArchived;
-      if (isRepair) laptop.isRepair = isRepair;
+      if (isRepair !== undefined) laptop.isRepair = isRepair;
       if (isArchived || laptop.isRepair) {
-        if (issues) laptop.issues = issues;
-        if (replace) laptop.replace = replace;
-        if (repairPrice) laptop.repairPrice = repairPrice;
-        if (repairCurrency) laptop.repairCurrency = repairCurrency;
-        if (repairDetails) laptop.repairDetails = repairDetails;
-        if (request) laptop.request = request;
-        if (resellPrice) laptop.resellPrice = resellPrice;
-        if (karrotPrice) laptop.karrotPrice = karrotPrice;
-        if (resellCurrency) laptop.resellCurrency = resellCurrency;
+        if (issues !== undefined) laptop.issues = issues;
+        if (replace !== undefined) laptop.replace = replace;
+        if (repairPrice !== undefined) laptop.repairPrice = repairPrice;
+        if (repairCurrency !== undefined) laptop.repairCurrency = repairCurrency;
+        if (repairDetails !== undefined) laptop.repairDetails = repairDetails;
+        if (request !== undefined) laptop.request = request;
+        if (resellPrice !== undefined) laptop.resellPrice = resellPrice;
+        if (karrotPrice !== undefined) laptop.karrotPrice = karrotPrice;
+        if (resellCurrency !== undefined) laptop.resellCurrency = resellCurrency;
       }
 
       const userObj = await User.get(laptop.userId);

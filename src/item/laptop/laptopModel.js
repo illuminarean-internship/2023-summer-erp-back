@@ -29,7 +29,7 @@ const laptopSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    required: false
+    default: "KRW"
   },
   serialNumber: {
     type: String,
@@ -46,11 +46,11 @@ const laptopSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: false
+    default: 0
   },
   surtax: {
     type: Number,
-    required: false
+    default: 0
   },
   illumiSerial: {
     type: String,

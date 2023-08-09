@@ -61,7 +61,7 @@ const laptopSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    required: false
+    required: false,
     default: ''
   },
   purchaseDate: {

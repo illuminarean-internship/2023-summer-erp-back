@@ -21,11 +21,13 @@ const AccSchema = new mongoose.Schema({
   },
   color: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   remarks: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   currency: {
     type: String,
@@ -49,7 +51,8 @@ const AccSchema = new mongoose.Schema({
   },
   purchasedFrom: {
     type: String,
-    required: false
+    required: false,
+    default: ''
   },
   // Additional info,
   isRepair: {

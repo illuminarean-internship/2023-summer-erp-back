@@ -21,7 +21,7 @@ const list = async (req, res, next) => {
       sws.map(async (item) => {
         const {
           _id, name, purchaseDate, unitPrice, quantity, totalPrice, remarks,
-          reference, currency, isUnreserved, isArchived, userId, log, createAt
+          reference, currency, isArchived, userId, log, createAt
         } = item; // Destructure the original object
         const user = (await User.get(userId)).name;
         const history = log.length !== 0 ? parseToObjectList(log) : [{
@@ -32,7 +32,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, name, purchaseDate, unitPrice, quantity, remarks,
-          totalPrice, currency, reference, user, isUnreserved, isArchived, userId, history, createAt
+          totalPrice, currency, reference, user, isArchived, userId, history, createAt
         };
       })
     );
@@ -49,7 +49,7 @@ const get = async (req, res, next) => {
     if (!sw) { const err = new APIError('No such sw exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
       _id, name, purchaseDate, unitPrice, quantity, reference, totalPrice,
-      currency, isUnreserved, isArchived, userId, log, createAt, remarks
+      currency, isArchived, userId, log, createAt, remarks
     } = sw; // Destructure the original object
     const user = (await User.get(userId)).name;
     const history = log.length !== 0 ? parseToObjectList(log) : [{
@@ -61,7 +61,7 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const swInfo = {
       _id, name, purchaseDate, unitPrice, quantity, totalPrice, currency, reference,
-      user, isUnreserved, isArchived, userId, history, createAt, remarks
+      user, isArchived, userId, history, createAt, remarks
     };
     return res.json(swInfo);
   } catch (err) {
@@ -89,8 +89,7 @@ const create = async (req, res, next) => {
     const sw = new SW({
       name, purchaseDate, unitPrice, totalPrice, quantity, currency, reference, userId, remarks
     });
-    const { isUnreserved, isArchived } = checkLocation(user);
-    sw.isUnreserved = isUnreserved;
+    const { isArchived } = checkLocation(user);
     sw.isArchived = isArchived;
     if (history) sw.log = parseToStringList(history);
     const savedSw = await sw.save();
@@ -132,8 +131,7 @@ const update = async (req, res, next) => {
     // if location changed-> update user schema and logg
     if (user && !validation._id.equals(sw.userId)) {
       // update user schema
-      const { isUnreserved, isArchived } = checkLocation(user);
-      sw.isUnreserved = isUnreserved;
+      const { isArchived } = checkLocation(user);
       sw.isArchived = isArchived;
 
       const userObj = await User.get(sw.userId);

@@ -13,7 +13,8 @@ const SwSchema = new mongoose.Schema({
   },
   unitPrice: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   quantity: {
     type: Number,
@@ -23,6 +24,7 @@ const SwSchema = new mongoose.Schema({
   currency: {
     type: String,
     required: false,
+    default: 'KRW'
   },
   reference: {
     type: String,
@@ -30,13 +32,10 @@ const SwSchema = new mongoose.Schema({
     default: ''
   },
   totalPrice: {
-    type: Number
+    type: Number,
+    default: 0
   },
   // Additional info,
-  isUnreserved: {
-    type: Boolean,
-    default: false
-  },
   remarks: {
     type: String,
     required: false,

@@ -17,11 +17,13 @@ const DesktopSchema = new mongoose.Schema({
   },
   purpose: {
     type: String,
-    required: true
+    required: true,
+    default: ''
   },
   remarks: {
     type: String,
-    required: true
+    required: true,
+    default: ''
   },
   details: {
     type: Array,

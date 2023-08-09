@@ -15,7 +15,7 @@ const list = async (req, res, next) => {
       accs.map(async (item) => {
         const {
           _id, model, category, illuSerialNumber, serialNumber, color, purchaseDate, purchasedFrom,
-          isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks,
+          isArchived, userId, log, createAt, price, surtax, totalPrice, dateAvail, daysLeft, remarks, currency
           isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency,
           karrotPrice
         } = item;
@@ -29,7 +29,7 @@ const list = async (req, res, next) => {
         // Rearrange the keys, add the new key, and create a new object
         return {
           _id, model, category, location, illuSerialNumber, serialNumber, color, purchaseDate,
-          purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice,
+          purchasedFrom, isArchived, userId, createAt, price, surtax, totalPrice, currency,
           history, dateAvail, daysLeft, remarks, isRepair, issues, replace, request, repairPrice,
           repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
         };

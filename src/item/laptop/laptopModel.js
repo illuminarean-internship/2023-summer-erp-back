@@ -115,7 +115,8 @@ const laptopSchema = new mongoose.Schema({
   },
   archive: {
     type: [String],
-    required: false
+    required: false,
+    default: []
   },
   createAt: {
     type: Date,

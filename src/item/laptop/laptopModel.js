@@ -33,11 +33,11 @@ const laptopSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: "KRW"
+    default: 'KRW'
   },
   serialNumber: {
     type: String,
-    required: false
+    required: false,
     default: ''
   },
   userId: { // location

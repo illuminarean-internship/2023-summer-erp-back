@@ -31,7 +31,8 @@ const AccSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    required: false
+    required: false,
+    default: 'KRW'
   },
   price: {
     type: Number,

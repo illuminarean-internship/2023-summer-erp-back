@@ -42,7 +42,7 @@ const laptopSchema = new mongoose.Schema({
   },
   warranty: {
     type: String,
-    required: false
+    default: ''
   },
   price: {
     type: Number

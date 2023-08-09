@@ -41,7 +41,7 @@ const laptopSchema = new mongoose.Schema({
     required: false
   },
   warranty: {
-    type: Date,
+    type: String,
     required: false
   },
   price: {

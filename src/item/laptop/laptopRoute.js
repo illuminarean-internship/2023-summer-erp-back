@@ -9,6 +9,9 @@ router.route('/')
   .get(laptopController.list)
   .post(laptopController.create);
 
+router.route('/temp')
+  .post(laptopController.createList);
+
 
 router.route('/item/:laptopId')
   .get(laptopController.get)

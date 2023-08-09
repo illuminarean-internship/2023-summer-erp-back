@@ -130,6 +130,78 @@ const get = async (req, res, next) => {
   }
 };
 
+const createList = async (req, res, next) => {
+  try {
+    const bodylist = req.body;
+    for( let i =0 ; i<bodylist.length; i++){
+      const item = bodylist[i];
+      const {
+        category, model, CPU, RAM, SSD, serialNumber, warranty, price, surtax,
+        illumiSerial, color, purchaseDate, purchasedFrom, currency, remarks,
+        totalPrice, location, history,
+        dateAvail, daysLeft, isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
+        resellPrice, resellCurrency, karrotPrice
+      } = item;
+      // Hidden problem!!same user name??? => should be replaced to userId
+  
+      // find the team is existing
+      const userObj = await User.getByName(location);
+      if (!userObj) {
+        const errorMessage = `The location ${location} is not existing!`;
+        // if not, return erro
+        return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
+      }
+  
+      // fill Laptopschema
+      const userId = userObj._id;
+      const laptop = new Laptop({
+        category,
+        model,
+        CPU,
+        RAM,
+        SSD,
+        serialNumber,
+        warranty,
+        price,
+        surtax,
+        illumiSerial,
+        color,
+        purchaseDate,
+        currency,
+        remarks,
+        totalPrice,
+        purchasedFrom,
+        userId,
+        dateAvail,
+        daysLeft,
+        history
+      });
+      const { isArchived } = checkLocation(location);
+      laptop.isArchived = isArchived;
+      laptop.isRepair = isRepair;
+      if (isArchived || isRepair) {
+        laptop.issues = issues;
+        laptop.replace = replace;
+        laptop.repairPrice = repairPrice;
+        laptop.repairCurrency = repairCurrency;
+        laptop.repairDetails = repairDetails;
+        laptop.request = request;
+        laptop.resellPrice = resellPrice;
+        laptop.resellCurrency = resellCurrency;
+        laptop.karrotPrice= karrotPrice;
+      }
+  
+      if (history) laptop.archive = parseToStringList(history);
+      const savedLaptop = await laptop.save();
+  
+      // update item list of user
+      userObj.numOfAssets += 1;
+      await userObj.save();
+    }
+} catch (err) {
+    return next(err);
+  }
+};
 const create = async (req, res, next) => {
   try {
     const {
@@ -293,5 +365,6 @@ export default {
   get,
   create,
   update,
-  remove
+  remove,
+  createList
 };

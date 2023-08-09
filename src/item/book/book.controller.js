@@ -135,7 +135,7 @@ const update = async (req, res, next) => {
     if (purchaseDate) book.purchaseDate = purchaseDate;
     if (purchasedFrom) book.purchasedFrom = purchasedFrom;
     if (price) book.price = price;
-    if (currency) book.currency = currency;
+    if (currency!==undefined) book.currency = currency;
 
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(book.userId)) {

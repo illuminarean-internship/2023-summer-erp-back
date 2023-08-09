@@ -44,7 +44,7 @@ const AccSchema = new mongoose.Schema({
   },
   totalPrice: {
     type: Number,
-    required: false
+    default: 0
   },
   purchaseDate: {
     type: Date,

@@ -44,9 +44,12 @@ const adminList = async (req, res, next) => {
 const list = async (req, res, next) => {
   try {
     const query = req.query;
-    const users = await User.findByQuery(query);
 
-    const userlist = await Promise.all(
+    const { team, project } = query;
+    if (team) { delete query.team; }
+    if (project) { delete query.project; }
+    const users = await User.findByQuery(query);
+    let userlist = await Promise.all(
       users.map(async (item) => {
         const {
           _id, name, teamId, projectIdList, field, numOfAssets, remarks, createAt, isAdmin, email
@@ -67,6 +70,8 @@ const list = async (req, res, next) => {
         };
       })
     );
+    if (team) userlist = userlist.filter((item) => item.team === team);
+    if (project) userlist = userlist.filter((item) => (item.project).includes(project));
     res.json(userlist);
   } catch (err) {
     next(err);

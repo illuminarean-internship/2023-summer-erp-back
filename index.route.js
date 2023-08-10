@@ -26,6 +26,6 @@ router.use('/test-device', MockupRoute);
 router.use('/laptop', laptopRoute);
 router.use('/accessory', AccRoute);
 router.use('/desktop-pc', desktopRoute);
-router.use('/info', desktopRoute);
+router.use('/info', infoRoute);
 
 export default router;

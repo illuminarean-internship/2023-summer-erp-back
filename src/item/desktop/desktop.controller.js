@@ -2,6 +2,8 @@ import httpStatus from 'http-status';
 import APIError from '../../helpers/apiErrorHelper.js';
 import User from '../../user/user.model.js';
 import Desktop from './desktop.model.js';
+import Info from '../info.model.js';
+
 import { parseToObjectList, parseToStringList } from '../history.function.js';
 import { checkLocation } from '../sub.function.js';
 
@@ -111,6 +113,11 @@ const create = async (req, res, next) => {
     // update item list of user
     userObj.numOfAssets += 1;
     await userObj.save();
+
+    const InfoObj = (await Info.list())[0];
+    InfoObj.numOfDesktop += 1;
+    await InfoObj.save();
+
     return res.json(savedDesktop);
   } catch (err) {
     return next(err);
@@ -188,6 +195,11 @@ const remove = async (req, res, next) => {
     const userObj = await User.get(desktop.userId);
     userObj.numOfAssets -= 1;
     await userObj.save();
+
+    const InfoObj = (await Info.list())[0];
+    InfoObj.numOfDesktop -= 1;
+    await InfoObj.save();
+
     const result = await Desktop.delete(desktopId);
     return res.json(result);
   } catch (err) {

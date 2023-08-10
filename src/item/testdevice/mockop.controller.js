@@ -26,8 +26,10 @@ const list = async (req, res, next) => {
         const user = await User.get(userId);
         const location = user.name;
         const team = user.teamId ? (await Team.get(user.teamId)).name : '';
+
+        const isValidDate = !isNaN(purchaseDate);
         const history = log.length !== 0 ? parseToObjectList(log) : [{
-          startDate: (purchaseDate !== undefined) && (purchaseDate !== null) ? purchaseDate.toISOString().split('T')[0]: null,
+          startDate: isValidDate ? purchaseDate.toISOString().split('T')[0]: null,
           endDate: '',
           historyLocation: location,
           historyRemark: ''}];

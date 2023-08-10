@@ -12,7 +12,7 @@ router.route('/item/:bookId')
   .put(bookController.update)
   .delete(bookController.remove);
 
-router.route('/history/:bookId')
-  .put(bookController.update)
+router.route('/temp/')
+  .post(bookController.createList);
 
 export default router;

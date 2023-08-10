@@ -8,16 +8,13 @@ const BookSchema = new mongoose.Schema({
     required: true
   },
   purchaseDate: {
-    type: Date,
-    required: true
+    type: Date
   },
   purchasedFrom: {
-    type: String,
-    required: true
+    type: String
   },
   price: {
-    type: Number,
-    required: true
+    type: Number
   },
   currency: {
     type: String,

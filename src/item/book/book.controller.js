@@ -121,6 +121,56 @@ const create = async (req, res, next) => {
   }
 };
 
+
+
+const createList = async (req, res, next) => {
+  try {
+    const bodylist = req.body;
+    for( let i =0 ; i<bodylist.length; i++){
+      const item = bodylist[i];
+      const {
+        title, location, purchaseDate, purchasedFrom, price, history, currency, resellCurrency, resellPrice, karrotPrice
+      } = item;
+  
+      // find the team is existing
+      const userObj = await User.getByName(location);
+      if (!userObj) {
+        const errorMessage = `The location ${location} is not existing!`;
+        // if not, return error
+        return next(new APIError(errorMessage, httpStatus.NOT_ACCEPTABLE));
+      }
+  
+      // fill Bookschema
+      const userId = userObj._id;
+      const name = title;
+      const book = new Book({
+        name, purchaseDate, purchasedFrom, price, userId, currency
+      });
+      const { isArchived } = checkLocation(location);
+      book.isArchived = isArchived;
+      if (isArchived) {
+        book.resellPrice = resellPrice;
+        book.resellCurrency = resellCurrency;
+        book.karrotPrice = karrotPrice;
+      }
+      if (history) book.log = parseToStringList(history);
+      const savedBook = await book.save();
+  
+      // update item list of user
+      userObj.numOfAssets += 1;
+      await userObj.save();
+  
+      const InfoObj = (await Info.list())[0];
+      InfoObj.numOfBook += 1;
+      await InfoObj.save();  
+    }
+    res.json("done");
+} catch (err) {
+    return next(err);
+  }
+};
+
+
 const update = async (req, res, next) => {
   try {
     const { bookId } = req.params;
@@ -214,5 +264,6 @@ export default {
   get,
   create,
   update,
-  remove
+  remove,
+  createList
 };

@@ -316,19 +316,6 @@ const update = async (req, res, next) => {
       // update user schema
       const { isArchived } = checkLocation(location);
       laptop.isArchived = isArchived;
-      if (isRepair !== undefined) laptop.isRepair = isRepair;
-      if (isArchived || laptop.isRepair) {
-        if (issues !== undefined) laptop.issues = issues;
-        if (replace !== undefined) laptop.replace = replace;
-        if (repairPrice !== undefined) laptop.repairPrice = repairPrice;
-        if (repairCurrency !== undefined) laptop.repairCurrency = repairCurrency;
-        if (repairDetails !== undefined) laptop.repairDetails = repairDetails;
-        if (request !== undefined) laptop.request = request;
-        if (resellPrice !== undefined) laptop.resellPrice = resellPrice;
-        if (karrotPrice !== undefined) laptop.karrotPrice = karrotPrice;
-        if (resellCurrency !== undefined) laptop.resellCurrency = resellCurrency;
-      }
-
       const userObj = await User.get(laptop.userId);
       userObj.numOfAssets -= 1;
       await userObj.save();
@@ -337,6 +324,18 @@ const update = async (req, res, next) => {
       await newUserObj.save();
 
       laptop.userId = newUserObj._id;
+    }
+    if (isRepair !== undefined) { laptop.isRepair = isRepair};
+    if (laptop.isArchived || laptop.isRepair) {
+      if (issues !== undefined) laptop.issues = issues;
+      if (replace !== undefined) laptop.replace = replace;
+      if (repairPrice !== undefined) laptop.repairPrice = repairPrice;
+      if (repairCurrency !== undefined) laptop.repairCurrency = repairCurrency;
+      if (repairDetails !== undefined) laptop.repairDetails = repairDetails;
+      if (request !== undefined) laptop.request = request;
+      if (resellPrice !== undefined) laptop.resellPrice = resellPrice;
+      if (karrotPrice !== undefined) laptop.karrotPrice = karrotPrice;
+      if (resellCurrency !== undefined) laptop.resellCurrency = resellCurrency;  
     }
     if (history) { laptop.archive = parseToStringList(history); }
     const laptopSaved = await laptop.save();

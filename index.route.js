@@ -9,6 +9,7 @@ import MockupRoute from './src/item/testdevice/mockop.route.js';
 import laptopRoute from './src/item/laptop/laptopRoute.js';
 import AccRoute from './src/item/accessory/acc.route.js';
 import desktopRoute from './src/item/desktop/desktop.route.js';
+import infoRoute from './src/item/info.route.js';
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.use('/test-device', MockupRoute);
 router.use('/laptop', laptopRoute);
 router.use('/accessory', AccRoute);
 router.use('/desktop-pc', desktopRoute);
+router.use('/info', desktopRoute);
 
 export default router;

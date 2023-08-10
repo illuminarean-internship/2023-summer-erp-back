@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import APIError from '../../helpers/apiErrorHelper.js';
 import User from '../../user/user.model.js';
 import Team from '../../user/team.model.js';
+import Info from '../info.model.js';
 import Book from './book.model.js';
 import { parseToObjectList, parseToStringList } from '../history.function.js';
 import { checkLocation } from '../sub.function.js';
@@ -109,6 +110,11 @@ const create = async (req, res, next) => {
     // update item list of user
     userObj.numOfAssets += 1;
     await userObj.save();
+
+    const InfoObj = (await Info.list())[0];
+    InfoObj.numOfBook += 1;
+    await InfoObj.save();
+
     return res.json(savedBook);
   } catch (err) {
     return next(err);
@@ -191,6 +197,11 @@ const remove = async (req, res, next) => {
     const userObj = await User.get(book.userId);
     userObj.numOfAssets -= 1;
     await userObj.save();
+
+    const InfoObj = (await Info.list())[0];
+    InfoObj.numOfBook -= 1;
+    await InfoObj.save();
+
     const result = await Book.delete(bookId);
     return res.json(result);
   } catch (err) {

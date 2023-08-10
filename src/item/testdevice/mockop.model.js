@@ -39,6 +39,9 @@ const MockupSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
+  purchaseDate: {
+    type: Date
+  },
   purchasedFrom: {
     type: String,
     required: false

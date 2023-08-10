@@ -81,7 +81,7 @@ const laptopSchema = new mongoose.Schema({
     default: 0
   },
   issues: {
-    type: [String]
+    type: String
   },
   replace: {
     type: String

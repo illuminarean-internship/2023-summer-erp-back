@@ -88,7 +88,7 @@ const AccSchema = new mongoose.Schema({
     required: false
   },
   issues: {
-    type: [String]
+    type: String
   },
   replace: {
     type: String

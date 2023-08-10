@@ -42,7 +42,7 @@ const DesktopSchema = new mongoose.Schema({
     default: false
   },
   issues: {
-    type: [String]
+    type: String
   },
   replace: {
     type: String

@@ -43,7 +43,8 @@ const adminList = async (req, res, next) => {
 
 const list = async (req, res, next) => {
   try {
-    const users = await User.list();
+    const query = req.query;
+    const users = await User.findByQuery(query);
 
     const userlist = await Promise.all(
       users.map(async (item) => {

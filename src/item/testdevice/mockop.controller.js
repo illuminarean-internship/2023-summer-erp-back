@@ -21,7 +21,7 @@ const list = async (req, res, next) => {
           _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
           remarks, isArchived, userId, log, createAt, totalPrice, currency,
           isRepair, issues, replace, request, repairPrice, repairCurrency, repairDetails,
-          resellPrice, resellCurrency, karrotPrice
+          resellPrice, resellCurrency, karrotPrice, purchaseDate
         } = item;
         const user = await User.get(userId);
         const location = user.name;
@@ -33,7 +33,7 @@ const list = async (req, res, next) => {
           historyRemark: ''}];
         // Rearrange the keys, add the new key, and create a new object
         return {
-          _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
+          _id, model, category, team, location, RAM, memory, serialNumber, condition, color, purchaseDate,
           purchasedFrom, remarks, isRepair, isArchived, userId, history, createAt, totalPrice, currency,
           issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
         };
@@ -53,7 +53,7 @@ const get = async (req, res, next) => {
     const mockup = await Mockup.get(mockupId);
     if (!mockup) { const err = new APIError('No such mockup exists!', httpStatus.NOT_FOUND); return next(err); }
     const {
-      _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
+      _id, model, category, RAM, memory, serialNumber, condition, color, purchasedFrom, purchaseDate,
       remarks, isRepair, isArchived, userId, log, createAt, totalPrice, currency,
       issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = mockup; // Destructure the original object
@@ -68,7 +68,7 @@ const get = async (req, res, next) => {
     // Rearrange the keys, add the new key, and create a new object
     const MockupInfo = {
       _id, model, category, team, location, RAM, memory, serialNumber, condition, color,
-      purchasedFrom, remarks, isRepair, isArchived, userId, history, createAt, totalPrice,
+      purchasedFrom, purchaseDate, remarks, isRepair, isArchived, userId, history, createAt, totalPrice,
       currency, issues, replace, request, repairPrice, repairCurrency, repairDetails, resellPrice, resellCurrency, 
       karrotPrice
     };
@@ -83,7 +83,7 @@ const create = async (req, res, next) => {
     // Hidden problem!!same user name??? => should be replaced to userId
     const {
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, history, location, totalPrice, currency,
+      remarks, history, location, totalPrice, currency,purchaseDate,
       isRepair, issues, replace, request, repairPrice,
       repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
     } = req.body;
@@ -100,7 +100,7 @@ const create = async (req, res, next) => {
     const userId = userObj._id;
     const mockup = new Mockup({
       model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
-      remarks, userId, totalPrice, currency
+      remarks, userId, totalPrice, currency, purchaseDate
     });
     const { isArchived } = checkLocation(location);
     mockup.isArchived = isArchived;
@@ -137,7 +137,7 @@ const update = async (req, res, next) => {
   try {
     const { mockupId } = req.params;
     const {
-      model, category, RAM, memory, serialNumber, condition, color, purchasedFrom,
+      model, category, RAM, memory, serialNumber, condition, color, purchasedFrom, purchaseDate,
       remarks, history, location, totalPrice, currency, isRepair, issues, replace, request, repairPrice,
       repairCurrency, repairDetails, resellPrice, resellCurrency, karrotPrice
       // isLogged , endDate, startDate, locationRemarks
@@ -162,7 +162,7 @@ const update = async (req, res, next) => {
     if (remarks !== undefined) mockup.remarks = remarks;
     if (purchasedFrom !== undefined) mockup.purchasedFrom = purchasedFrom;
     if (totalPrice !== undefined) mockup.totalPrice = totalPrice;
-
+    if (purchaseDate !== undefined) mockup.purchaseDate = purchaseDate;
     // if location changed-> update user schema and logg
     if (location && !validation._id.equals(mockup.userId)) {
       // update user schema

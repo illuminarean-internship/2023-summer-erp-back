@@ -161,18 +161,6 @@ const update = async (req, res, next) => {
       // update user schema
       const { isArchived } = checkLocation(location);
       mockup.isArchived = isArchived;
-      if (isRepair !== undefined) mockup.isRepair = isRepair;
-      if (isArchived || mockup.isRepair) {
-        if (issues !== undefined) mockup.issues = issues;
-        if (replace !== undefined) mockup.replace = replace;
-        if (repairPrice !== undefined) mockup.repairPrice = repairPrice;
-        if (repairCurrency !== undefined) mockup.repairCurrency = repairCurrency;
-        if (repairDetails !== undefined) mockup.repairDetails = repairDetails;
-        if (request !== undefined) mockup.request = request;
-        if (resellPrice !== undefined) mockup.resellPrice = resellPrice;
-        if (karrotPrice !== undefined) mockup.karrotPrice = karrotPrice;
-        if (resellCurrency !== undefined) mockup.resellCurrency = resellCurrency;
-      }
 
       const userObj = await User.get(mockup.userId);
       userObj.numOfAssets -= 1;
@@ -183,6 +171,18 @@ const update = async (req, res, next) => {
       await userNewObj.save();
 
       mockup.userId = userNewObj._id;
+    }
+    if (isRepair !== undefined) { mockup.isRepair = isRepair;}
+    if (mockup.isArchived || mockup.isRepair) {
+      if (issues !== undefined) mockup.issues = issues;
+      if (replace !== undefined) mockup.replace = replace;
+      if (repairPrice !== undefined) mockup.repairPrice = repairPrice;
+      if (repairCurrency !== undefined) mockup.repairCurrency = repairCurrency;
+      if (repairDetails !== undefined) mockup.repairDetails = repairDetails;
+      if (request !== undefined) mockup.request = request;
+      if (resellPrice !== undefined) mockup.resellPrice = resellPrice;
+      if (karrotPrice !== undefined) mockup.karrotPrice = karrotPrice;
+      if (resellCurrency !== undefined) mockup.resellCurrency = resellCurrency;  
     }
     if (history) { mockup.log = parseToStringList(history); }
     const mockupsaved = await mockup.save();

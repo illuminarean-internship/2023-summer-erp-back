@@ -216,18 +216,6 @@ const update = async (req, res, next) => {
       // update user schema
       const { isArchived } = checkLocation(location);
       acc.isArchived = isArchived;
-      if (isRepair !== undefined) acc.isRepair = isRepair;
-      if (isArchived || acc.isRepair) {
-        if (issues !== undefined) acc.issues = issues;
-        if (replace !== undefined) acc.replace = replace;
-        if (repairPrice !== undefined) acc.repairPrice = repairPrice;
-        if (repairCurrency !== undefined) acc.repairCurrency = repairCurrency;
-        if (repairDetails !== undefined) acc.repairDetails = repairDetails;
-        if (request !== undefined) acc.request = request;
-        if (resellPrice !== undefined) acc.resellPrice = resellPrice;
-        if (resellCurrency !== undefined) acc.resellCurrency = resellCurrency;
-        if (karrotPrice !== undefined) acc.karrotPrice = karrotPrice;
-      }
 
       const userObj = await User.get(acc.userId);
       userObj.numOfAssets -= 1;
@@ -238,6 +226,18 @@ const update = async (req, res, next) => {
       await userNewObj.save();
 
       acc.userId = userNewObj._id;
+    }
+    if (isRepair !== undefined) { acc.isRepair = isRepair;}
+    if (acc.isArchived || acc.isRepair) {
+      if (issues !== undefined) acc.issues = issues;
+      if (replace !== undefined) acc.replace = replace;
+      if (repairPrice !== undefined) acc.repairPrice = repairPrice;
+      if (repairCurrency !== undefined) acc.repairCurrency = repairCurrency;
+      if (repairDetails !== undefined) acc.repairDetails = repairDetails;
+      if (request !== undefined) acc.request = request;
+      if (resellPrice !== undefined) acc.resellPrice = resellPrice;
+      if (karrotPrice !== undefined) acc.karrotPrice = karrotPrice;
+      if (resellCurrency !== undefined) acc.resellCurrency = resellCurrency;  
     }
     if (history) { acc.log = parseToStringList(history); }
     const accsaved = await acc.save();

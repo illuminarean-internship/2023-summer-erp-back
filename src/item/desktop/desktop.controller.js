@@ -149,18 +149,6 @@ const update = async (req, res, next) => {
       // update user schema
       const { isArchived } = checkLocation(location);
       desktop.isArchived = isArchived;
-      if (isRepair !== undefined) desktop.isRepair = isRepair;
-      if (isArchived || desktop.isRepair) {
-        if (issues !== undefined) desktop.issues = issues;
-        if (replace !== undefined) desktop.replace = replace;
-        if (repairPrice !== undefined) desktop.repairPrice = repairPrice;
-        if (repairCurrency !== undefined) desktop.repairCurrency = repairCurrency;
-        if (repairDetails !== undefined) desktop.repairDetails = repairDetails;
-        if (request !== undefined) desktop.request = request;
-        if (resellPrice !== undefined) desktop.resellPrice = resellPrice;
-        if (karrotPrice !== undefined) desktop.karrotPrice = karrotPrice;
-        if (resellCurrency !== undefined) desktop.resellCurrency = resellCurrency;
-      }
 
       const userObj = await User.get(desktop.userId);
       userObj.numOfAssets -= 1;
@@ -171,6 +159,18 @@ const update = async (req, res, next) => {
       await userNewObj.save();
 
       desktop.userId = userNewObj._id;
+    }
+    if (isRepair !== undefined) { desktop.isRepair = isRepair;}
+    if (desktop.isArchived || desktop.isRepair) {
+      if (issues !== undefined) desktop.issues = issues;
+      if (replace !== undefined) desktop.replace = replace;
+      if (repairPrice !== undefined) desktop.repairPrice = repairPrice;
+      if (repairCurrency !== undefined) desktop.repairCurrency = repairCurrency;
+      if (repairDetails !== undefined) desktop.repairDetails = repairDetails;
+      if (request !== undefined) desktop.request = request;
+      if (resellPrice !== undefined) desktop.resellPrice = resellPrice;
+      if (karrotPrice !== undefined) desktop.karrotPrice = karrotPrice;
+      if (resellCurrency !== undefined) desktop.resellCurrency = resellCurrency;  
     }
     if (history) { desktop.log = parseToStringList(history); }
     const desktopSaved = await desktop.save();

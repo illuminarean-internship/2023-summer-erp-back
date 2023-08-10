@@ -29,7 +29,7 @@ const list = async (req, res, next) => {
 
         const isValidDate = !isNaN(purchaseDate);
         const history = log.length !== 0 ? parseToObjectList(log) : [{
-          startDate: isValidDate ? purchaseDate.toISOString().split('T')[0]: null,
+          startDate: isValidDate ? purchaseDate.toISOString().split('T')[0]: '',
           endDate: '',
           historyLocation: location,
           historyRemark: ''}];

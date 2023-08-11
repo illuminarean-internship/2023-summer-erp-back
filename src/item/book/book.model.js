@@ -27,13 +27,13 @@ const BookSchema = new mongoose.Schema({
     default: false
   },
   resellPrice: {
-    type: Number
+    type: String
   },
   resellCurrency: {
     type: String
   },
   karrotPrice: {
-    type: Number
+    type: String
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

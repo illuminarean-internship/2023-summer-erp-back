@@ -99,13 +99,13 @@ const laptopSchema = new mongoose.Schema({
     type: String
   },
   resellPrice: {
-    type: Number
+    type: String
   },
   resellCurrency: {
     type: String
   },
   karrotPrice: {
-    type: Number
+    type: String
   },
 
   // Additional info

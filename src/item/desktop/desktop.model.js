@@ -60,13 +60,13 @@ const DesktopSchema = new mongoose.Schema({
     type: String
   },
   resellPrice: {
-    type: Number
+    type: String
   },
   resellCurrency: {
     type: String
   },
   karrotPrice: {
-    type: Number
+    type: String
   },
   isArchived: {
     type: Boolean,
